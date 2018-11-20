@@ -201,7 +201,7 @@ static void fakeNotifications() {
         NCNotificationRequest *b = (NCNotificationRequest *)obj2;
 
         if ([a.bulletin.sectionID isEqualToString:b.bulletin.sectionID]) {
-            return [b.bulletin.date compare:a.bulletin.date];
+            return [b.timestamp compare:a.timestamp];
         }
 
         return [a.bulletin.sectionID localizedStandardCompare:b.bulletin.sectionID];
