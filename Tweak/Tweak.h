@@ -604,7 +604,9 @@
 @property (assign,nonatomic) bool sxiVisible;
 @property (assign,nonatomic) NSUInteger sxiPositionInStack;
 @property (nonatomic,retain) NSMutableOrderedSet *sxiStackedNotificationRequests;
-@property (nonatomic,readonly) NCNotificationAction* clearAction; 
+@property (nonatomic,readonly) NCNotificationAction* clearAction;
+@property (nonatomic,readonly) NSDate* timestamp;
+
 
 -(void)sxiInsertRequest:(NCNotificationRequest *)request;
 -(void)sxiExpand;
