@@ -729,12 +729,12 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool debug = false;
 
     if (enabled) {
-        NSBundle *langBundle = [[NSBundle alloc] initWithPath:LANG_BUNDLE_PATH];
+        NSBundle *langBundle = [NSBundle bundleWithPath:LANG_BUNDLE_PATH];
         translationDict = [@{
-            kClear : [langBundle localizedStringForKey:kClear value:@"Clear All" table:nil],
-            kCollapse : [langBundle localizedStringForKey:kCollapse value:@"Collapse" table:nil],
-            kOneMoreNotif : [langBundle localizedStringForKey:kOneMoreNotif value:@"%d more notification" table:nil],
-            kMoreNotifs : [langBundle localizedStringForKey:kMoreNotifs value:@"%d more notifications" table:nil]
+            kClear : langBundle ? [langBundle localizedStringForKey:kClear value:@"Clear All" table:nil] : @"Clear All",
+            kCollapse : langBundle ? [langBundle localizedStringForKey:kCollapse value:@"Collapse" table:nil] : @"Collapse",
+            kOneMoreNotif : langBundle ? [langBundle localizedStringForKey:kOneMoreNotif value:@"%d more notification" table:nil] : @"%d more notification",
+            kMoreNotifs : langBundle ? [langBundle localizedStringForKey:kMoreNotifs value:@"%d more notifications" table:nil] : @"%d more notifications"
         } retain];
         [langBundle release];
         CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, displayStatusChanged, CFSTR("com.apple.iokit.hid.displayStatus"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
