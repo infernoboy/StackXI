@@ -1,6 +1,10 @@
 #import "Tweak.h"
 
-
+#define kClear @"CLEAR"
+#define kCollapse @"COLLAPSE"
+#define kOneMoreNotif @"ONE_MORE_NOTIFICATION"
+#define kMoreNotifs @"MORE_NOTIFICATIONS"
+#define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
 #define TEMPDURATION 0.4
 
@@ -11,6 +15,7 @@ static NCNotificationPriorityList *priorityList = nil;
 static NCNotificationListCollectionView *listCollectionView = nil;
 static NCNotificationCombinedListViewController *clvc = nil;
 static bool showButtons = false;
+static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
@@ -473,7 +478,7 @@ static void fakeNotifications() {
             [self.sxiClearAllButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
             self.sxiClearAllButton.hidden = YES;
             self.sxiClearAllButton.alpha = 0.0;
-            [self.sxiClearAllButton setTitle:@"Clear All" forState: UIControlStateNormal];
+            [self.sxiClearAllButton setTitle:[translationDict objectForKey:kClear] forState: UIControlStateNormal];
             self.sxiClearAllButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiClearAllButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiClearAllButton.layer.masksToBounds = true;
@@ -483,7 +488,7 @@ static void fakeNotifications() {
             [self.sxiCollapseButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
             self.sxiCollapseButton.hidden = YES;
             self.sxiCollapseButton.alpha = 0.0;
-            [self.sxiCollapseButton setTitle:@"Collapse" forState:UIControlStateNormal];
+            [self.sxiCollapseButton setTitle:[translationDict objectForKey:kCollapse] forState:UIControlStateNormal];
             self.sxiCollapseButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiCollapseButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiCollapseButton.layer.masksToBounds = true;
@@ -540,9 +545,9 @@ static void fakeNotifications() {
 
             int count = [self.notificationRequest.sxiStackedNotificationRequests count];
             if (count == 1) {
-                self.sxiNotificationCount.text = [NSString stringWithFormat:@"%d more notification", count];
+                self.sxiNotificationCount.text = [NSString stringWithFormat:[translationDict objectForKey:kOneMoreNotif], count];
             } else {
-                self.sxiNotificationCount.text = [NSString stringWithFormat:@"%d more notifications", count];
+                self.sxiNotificationCount.text = [NSString stringWithFormat:[translationDict objectForKey:kMoreNotifs], count];
             }
         } else if (showButtons) {
             self.sxiClearAllButton.hidden = NO;
@@ -724,6 +729,14 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool debug = false;
 
     if (enabled) {
+        NSBundle *langBundle = [NSBundle bundleWithPath:LANG_BUNDLE_PATH];
+        translationDict = [@{
+            kClear : langBundle ? [langBundle localizedStringForKey:kClear value:@"Clear All" table:nil] : @"Clear All",
+            kCollapse : langBundle ? [langBundle localizedStringForKey:kCollapse value:@"Collapse" table:nil] : @"Collapse",
+            kOneMoreNotif : langBundle ? [langBundle localizedStringForKey:kOneMoreNotif value:@"%d more notification" table:nil] : @"%d more notification",
+            kMoreNotifs : langBundle ? [langBundle localizedStringForKey:kMoreNotifs value:@"%d more notifications" table:nil] : @"%d more notifications"
+        } retain];
+        [langBundle release];
         CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, displayStatusChanged, CFSTR("com.apple.iokit.hid.displayStatus"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
         %init(StackXI);
         if (debug) %init(StackXIDebug);
