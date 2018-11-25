@@ -85,7 +85,7 @@
 			<key>cellClass</key>
 			<string>HBLinkTableCell</string>
 			<key>label</key>
-			<string>GITHUB</string>
+			<string>Github</string>
 			<key>subtitle</key>
 			<string>SOURCE_CODE</string>
 			<key>url</key>
