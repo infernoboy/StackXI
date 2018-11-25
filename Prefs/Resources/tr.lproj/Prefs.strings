@@ -1,27 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>ENABLED</key>
-  <string>Aktif</string>
-  <key>SHOW_BUTTONS</key>
-  <string>"Collapse" ve "Clear All" butonları</string>
-  <key>RESPRING</key>
-  <string>SpringBoard'u Yenile</string>
-  <key>ARE_YOU_SURE_TO_RESET_PREFS</key>
-  <string>Ayarları sıfırlamak istediğinizden emin misiniz? Bu geri alınamaz.</string>
-  <key>OK</key>
-  <string>Tamam</string>
-  <key>CANCEL</key>
-  <string>Vazgeç</string>
-  <key>RESET_PREFS</key>
-  <string>Ayarları sıfırla ve SpringBoard'u yenile</string>
-  <key>SOURCE_CODE</key>
-  <string>Kaynak Kodu</string>
-  <key>DONATE_TO_OMINOUSNESS</key>
-  <string>Ominousness'a Bağış Yap</string>
-  <key>SUPPORT_ME</key>
-  <string>Bana destek ol!</string>
-</dict>
-
-</plist>
+{
+  "ENABLED" = "Aktif";
+  "SHOW_BUTTONS" = '"Collapse" ve "Clear All" butonları';
+  "RESPRING" = "SpringBoard'u Yenile";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "Ayarları sıfırlamak istediğinizden emin misiniz? Bu geri alınamaz.";
+  "OK" = "Tamam";
+  "CANCEL" = "Vazgeç";
+  "RESET_PREFS" = "Ayarları sıfırla ve SpringBoard'u yenile";
+  "SOURCE_CODE" = "Kaynak Kodu";
+  "DONATE_TO_OMINOUSNESS" = "Ominousness'a Bağış Yap";
+  "SUPPORT_ME" = "ana destek ol!";
+}
