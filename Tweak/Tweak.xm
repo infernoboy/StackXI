@@ -10,6 +10,7 @@
 
 extern dispatch_queue_t __BBServerQueue;
 
+static SBDashBoardCombinedListViewController *sbdbclvc = nil;
 static BBServer *bbServer = nil;
 static NCNotificationPriorityList *priorityList = nil;
 static NCNotificationListCollectionView *listCollectionView = nil;
@@ -83,6 +84,16 @@ static void fakeNotifications() {
 %end
 
 %group StackXI
+
+%hook SBDashBoardCombinedListViewController
+
+-(void)viewDidLoad{
+    %orig;
+    sbdbclvc = self; 
+}
+
+%end
+
 
 %hook NCNotificationListSectionRevealHintView
 
@@ -598,6 +609,13 @@ static void fakeNotifications() {
         NCNotificationListCell* cell = (NCNotificationListCell*)c;
         [self sendSubviewToBack:cell];
         [(NCNotificationShortLookViewController *)cell.contentViewController sxiUpdateCount];
+    }
+
+    //LPP compatibility
+    if ([self numberOfItemsInSection:0] > 0) {
+        [sbdbclvc _setListHasContent:YES];
+    } else {
+        [sbdbclvc _setListHasContent:NO];
     }
 }
 

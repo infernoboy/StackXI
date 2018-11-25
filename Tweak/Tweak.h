@@ -614,6 +614,10 @@
 
 @end
 
+@interface SBDashBoardCombinedListViewController : UIViewController
+-(void)_setListHasContent:(BOOL)arg1;
+@end
+
 @interface NCNotificationViewController : UIViewController 
 
 @property (nonatomic,retain) NCNotificationRequest* notificationRequest;          
