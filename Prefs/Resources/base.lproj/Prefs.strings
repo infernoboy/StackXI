@@ -1,0 +1,12 @@
+{
+  "ENABLED" = "Enabled";
+  "SHOW_BUTTONS" = 'Show "Collapse" / "Clear All" buttons';
+  "RESPRING" = "Respring";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "Are you sure you want to reset all your preferences? This cannot be undone.";
+  "OK" = "OK";
+  "CANCEL" = "Cancel";
+  "RESET_PREFS" = "Restore default settings and respring";
+  "SOURCE_CODE" = "Source code";
+  "DONATE_TO_OMINOUSNESS" = "Donate to Ominousness";
+  "SUPPORT_ME" = "Support me!";
+}
