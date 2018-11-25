@@ -1,0 +1,12 @@
+{
+  "ENABLED" = "Włącz";
+  "SHOW_BUTTONS" = 'Pokaż przyciski "Wymaż wszystkie"/"Zwiń"';
+  "RESPRING" = "Respring";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "Na pewno chcesz zresetować wszytkie ustawienia? Ta akcja jest nieodwracalna.";
+  "OK" = "OK";
+  "CANCEL" = "Anuluj";
+  "RESET_PREFS" = "Przywróć ustawienia domyślne i wykonaj respring";
+  "SOURCE_CODE" = "Kod źródłowy";
+  "DONATE_TO_OMINOUSNESS" = "Wspomóź Ominousness";
+  "SUPPORT_ME" = "Wspomóź mnie!";
+}
