@@ -16,8 +16,6 @@
   <string>Cancel</string>
   <key>RESET_PREFS</key>
   <string>Restore default settings and respring</string>
-  <key>GITHUB</key>
-  <string>Github</string>
   <key>SOURCE_CODE</key>
   <string>Source code</string>
   <key>DONATE_TO_OMINOUSNESS</key>

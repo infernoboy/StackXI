@@ -16,8 +16,6 @@
   <string>Vazgeç</string>
   <key>RESET_PREFS</key>
   <string>Ayarları sıfırla ve SpringBoard'u yenile</string>
-  <key>GITHUB</key>
-  <string>Github</string>
   <key>SOURCE_CODE</key>
   <string>Kaynak Kodu</string>
   <key>DONATE_TO_OMINOUSNESS</key>
