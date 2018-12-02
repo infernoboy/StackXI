@@ -520,6 +520,10 @@ static void fakeNotifications() {
 
 %new
 -(void)sxiUpdateCount {
+    if (!self.nextResponder) return;
+    if (!self.nextResponder.nextResponder) return;
+    if ([NSStringFromClass([self.nextResponder.nextResponder class]) isEqualToString:@"NCNotificationListCell"])
+
     if (!self.sxiNotificationCount) {
         self.sxiNotificationCount = [[UILabel alloc] initWithFrame:[self sxiGetNotificationCountFrame]];
         [self.sxiNotificationCount setFont:[UIFont systemFontOfSize:12]];
@@ -803,7 +807,7 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool enabled = [([file objectForKey:@"Enabled"] ?: @(YES)) boolValue];
     showButtons = [([file objectForKey:@"ShowButtons"] ?: @(NO)) boolValue];
     useIcons = [([file objectForKey:@"UseIcons"] ?: @(NO)) boolValue];
-    bool debug = false;
+    bool debug = true;
 
     if (enabled) {
         NSBundle *langBundle = [NSBundle bundleWithPath:LANG_BUNDLE_PATH];
