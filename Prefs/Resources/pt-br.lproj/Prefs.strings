@@ -1,0 +1,12 @@
+{
+    "ARE_YOU_SURE_TO_RESET_PREFS" = "Tem certeza de que deseja redefinir todas as suas prefer\U00eancias? Isto n\U00e3o pode ser desfeito.";
+    CANCEL = Cancelar;
+    "DONATE_TO_OMINOUSNESS" = "Doar para Ominousness";
+    ENABLED = Ativado;
+    OK = OK;
+    "RESET_PREFS" = "Restaurar configura\U00e7\U00f5es padr\U00f5es e respring ";
+    RESPRING = Redorzinho;
+    "SHOW_BUTTONS" = "Mostrar op\U00e7\U00f5es \"Recolher\" / \"Limpar\"";
+    "SOURCE_CODE" = "C\U00f3digo fonte";
+    "SUPPORT_ME" = "Ajude-me!";
+}
