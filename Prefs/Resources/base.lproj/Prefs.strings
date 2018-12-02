@@ -1,6 +1,7 @@
 {
   "ENABLED" = "Enabled";
   "SHOW_BUTTONS" = 'Show "Collapse" / "Clear All" buttons';
+  "USE_ICONS" = "Use icons instead of text for buttons";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Are you sure you want to reset all your preferences? This cannot be undone.";
   "OK" = "OK";

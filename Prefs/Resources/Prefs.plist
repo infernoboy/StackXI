@@ -40,6 +40,20 @@
 			<key>alternateColors</key>
 			<true/>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>io.ominousness.stackxi</string>
+			<key>label</key>
+			<string>USE_ICONS</string>
+			<key>key</key>
+			<string>UseIcons</string>
+			<key>alternateColors</key>
+			<true/>
+		</dict>
 
 		<!-- Credits -->
 		<dict>

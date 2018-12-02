@@ -642,6 +642,8 @@
 -(CGRect)sxiGetClearAllButtonFrame;
 -(CGRect)sxiGetCollapseButtonFrame;
 -(CGRect)sxiGetNotificationCountFrame;
+-(int)sxiButtonWidth;
+-(int)sxiButtonSpacing;
 
 @end
 

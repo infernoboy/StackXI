@@ -4,6 +4,8 @@
 #define kCollapse @"COLLAPSE"
 #define kOneMoreNotif @"ONE_MORE_NOTIFICATION"
 #define kMoreNotifs @"MORE_NOTIFICATIONS"
+#define ICON_COLLAPSE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/SXICollapse.png"
+#define ICON_CLEAR_ALL_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/SXIClearAll.png"
 #define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
 #define TEMPDURATION 0.4
@@ -16,6 +18,7 @@ static NCNotificationPriorityList *priorityList = nil;
 static NCNotificationListCollectionView *listCollectionView = nil;
 static NCNotificationCombinedListViewController *clvc = nil;
 static bool showButtons = false;
+static bool useIcons = false;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
@@ -436,17 +439,17 @@ static void fakeNotifications() {
 
 -(id)init {
     id orig = %orig;
-    self.sxiIsLTR = true;
     NSLog(@"[StackXI] shortlook view init");
     return orig;
 }
 
 -(void)viewWillAppear:(bool)whatever {
     %orig;
-    [self sxiUpdateCount];
+    self.sxiIsLTR = true;
     if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute] == UIUserInterfaceLayoutDirectionRightToLeft) {
         self.sxiIsLTR = false;
     }
+    [self sxiUpdateCount];
 }
 
 -(void)viewDidAppear:(bool)whatever {
@@ -478,20 +481,35 @@ static void fakeNotifications() {
 }
 
 %new
+-(int)sxiButtonWidth {
+    if (useIcons) return 45;
+    return 75;
+}
+
+%new
+-(int)sxiButtonSpacing {
+    return 5;
+}
+
+%new
 -(CGRect)sxiGetClearAllButtonFrame {
+    int width = [self sxiButtonWidth];
+    int spacing = [self sxiButtonSpacing];
     if (self.sxiIsLTR) {
-        return CGRectMake(self.view.frame.origin.x + self.view.frame.size.width - 165, self.view.frame.origin.y + 5, 75, 25);
+        return CGRectMake(self.view.frame.origin.x + self.view.frame.size.width - (2*spacing) - (2*width), self.view.frame.origin.y + spacing, width, 25);
     } else {
-        return CGRectMake(self.view.frame.origin.x + 5, self.view.frame.origin.y + 5, 75, 25);
+        return CGRectMake(self.view.frame.origin.x + spacing, self.view.frame.origin.y + spacing, width, 25);
     }
 }
 
 %new
 -(CGRect)sxiGetCollapseButtonFrame {
+    int width = [self sxiButtonWidth];
+    int spacing = [self sxiButtonSpacing];
     if (self.sxiIsLTR) {
-        return CGRectMake(self.view.frame.origin.x + self.view.frame.size.width - 80, self.view.frame.origin.y + 5, 75, 25);
+        return CGRectMake(self.view.frame.origin.x + self.view.frame.size.width - spacing - width, self.view.frame.origin.y + spacing, width, 25);
     } else {
-        return CGRectMake(self.view.frame.origin.x + 85, self.view.frame.origin.y + 5, 75, 25);
+        return CGRectMake(self.view.frame.origin.x + (2*spacing) + width, self.view.frame.origin.y + spacing, width, 25);
     }
 }
 
@@ -536,6 +554,18 @@ static void fakeNotifications() {
             [self.sxiClearAllButton addTarget:self action:@selector(sxiClearAll:) forControlEvents:UIControlEventTouchUpInside];
             [self.sxiCollapseButton addTarget:self action:@selector(sxiCollapse:) forControlEvents:UIControlEventTouchUpInside];
             
+            if (useIcons) {
+                self.sxiCollapseButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+                [self.sxiCollapseButton setTitle:NULL forState:UIControlStateNormal];
+                UIImage *btnCollapseImage = [UIImage imageWithContentsOfFile:ICON_COLLAPSE_PATH];
+                [self.sxiCollapseButton setImage:btnCollapseImage forState:UIControlStateNormal];
+
+                self.sxiClearAllButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+                [self.sxiClearAllButton setTitle:NULL forState:UIControlStateNormal];
+                UIImage *btnClearAllImage = [UIImage imageWithContentsOfFile:ICON_CLEAR_ALL_PATH];
+                [self.sxiClearAllButton setImage:btnClearAllImage forState:UIControlStateNormal];
+            }
+
             [self.view addSubview:self.sxiClearAllButton];
             [self.view addSubview:self.sxiCollapseButton];
         }
@@ -772,6 +802,7 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     HBPreferences *file = [[HBPreferences alloc] initWithIdentifier:@"io.ominousness.stackxi"];
     bool enabled = [([file objectForKey:@"Enabled"] ?: @(YES)) boolValue];
     showButtons = [([file objectForKey:@"ShowButtons"] ?: @(NO)) boolValue];
+    useIcons = [([file objectForKey:@"UseIcons"] ?: @(NO)) boolValue];
     bool debug = false;
 
     if (enabled) {

@@ -1,6 +1,7 @@
 {
   "ENABLED" = "Włącz";
   "SHOW_BUTTONS" = 'Pokaż przyciski "Wymaż wszystkie"/"Zwiń"';
+  "USE_ICONS" = "Użyj ikon zamiast tekstu w przyciskach";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Na pewno chcesz zresetować wszytkie ustawienia? Ta akcja jest nieodwracalna.";
   "OK" = "OK";
