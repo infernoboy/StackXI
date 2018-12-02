@@ -1,6 +1,7 @@
 {
   "ENABLED" = "Activer";
   "SHOW_BUTTONS" = 'Afficher les boutons "Regrouper" / "Tout vider"';
+  "USE_ICONS" = "Remplacer le texte de chaque bouton par une icône";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Es-tu sûr de vouloir réinitialiser tous tes réglages? Cette action n'est pas réversible.";
   "OK" = "OUI";
