@@ -629,6 +629,7 @@
 @property (nonatomic, retain) UILabel* sxiNotificationCount;
 @property (nonatomic, retain) UIButton* sxiClearAllButton;
 @property (nonatomic, retain) UIButton* sxiCollapseButton;
+@property (assign,nonatomic) bool sxiIsLTR;
 
 -(void)_handleTapOnView:(id)arg1 ;
 -(id)_initWithNotificationRequest:(id)arg1 revealingAdditionalContentOnPresentation:(BOOL)arg2 ;
@@ -638,6 +639,9 @@
 -(void)sxiUpdateCount;
 -(void)sxiCollapse:(UIButton *)button;
 -(void)sxiClearAll:(UIButton *)button;
+-(CGRect)sxiGetClearAllButtonFrame;
+-(CGRect)sxiGetCollapseButtonFrame;
+-(CGRect)sxiGetNotificationCountFrame;
 
 @end
 
