@@ -341,8 +341,8 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)removeNotificationRequest:(NCNotificationRequest *)request {
-    %orig;
     [self.allRequests removeObject:request];
+    %orig;
     [listCollectionView reloadData];
     return 0;
 }
@@ -525,9 +525,11 @@ static void fakeNotifications() {
 %new
 -(void)sxiClearAll:(UIButton *)button {
     for (NCNotificationRequest *request in self.notificationRequest.sxiStackedNotificationRequests) {
+        [priorityList.allRequests removeObject:request];
         [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
     }
     
+    [priorityList.allRequests removeObject:self.notificationRequest];
     [self.notificationRequest.clearAction.actionRunner executeAction:self.notificationRequest.clearAction fromOrigin:self withParameters:nil completion:nil];
     [listCollectionView reloadData];
 }
