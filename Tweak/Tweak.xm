@@ -226,19 +226,40 @@ static void fakeNotifications() {
 -(void)sxiUpdateList {
     [self.requests removeAllObjects];
 
-    [self.allRequests sortUsingComparator:(NSComparator)^(id obj1, id obj2){
-        // TODO: improve sorting logic!
-        // i.e. sort also by last date (some magic idk w/e)
+    NSMutableDictionary* stacks = [[NSMutableDictionary alloc] initWithCapacity:1000];
 
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
+        if (req.bulletin.sectionID) {
+            if (stacks[req.bulletin.sectionID]) {
+                if ([req.timestamp compare:stacks[req.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending) {
+                    stacks[req.bulletin.sectionID] = @{
+                        @"timestamp" : req.timestamp,
+                        @"priority" : stacks[req.bulletin.sectionID][@"priority"]
+                    };
+                }
+            } else {
+                stacks[req.bulletin.sectionID] = @{
+                    @"timestamp" : req.timestamp,
+                    @"priority" : @(false)
+                };
+            }
+        }
+    }
+
+    [self.allRequests sortUsingComparator:(NSComparator)^(id obj1, id obj2){
         NCNotificationRequest *a = (NCNotificationRequest *)obj1;
         NCNotificationRequest *b = (NCNotificationRequest *)obj2;
 
         if ([a.bulletin.sectionID isEqualToString:b.bulletin.sectionID]) {
-            return [b.timestamp compare:a.timestamp];
+            return [b.timestamp compare:a.timestamp] == NSOrderedDescending;
         }
 
-        return [a.bulletin.sectionID localizedStandardCompare:b.bulletin.sectionID];
-        // TODO: sort by date of the last one in a stack
+        if (b.bulletin.sectionID && a.bulletin.sectionID && stacks[b.bulletin.sectionID] && stacks[a.bulletin.sectionID]) {
+            return [stacks[b.bulletin.sectionID][@"timestamp"] compare:stacks[a.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending;
+        }
+
+        return [a.bulletin.sectionID localizedStandardCompare:b.bulletin.sectionID] == NSOrderedAscending;
     }];
 
     NSString *expandedSection = nil;
