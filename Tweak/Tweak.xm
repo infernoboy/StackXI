@@ -520,9 +520,28 @@ static void fakeNotifications() {
 
 %new
 -(void)sxiUpdateCount {
-    if (!self.nextResponder) return;
-    if (!self.nextResponder.nextResponder) return;
-    if ([NSStringFromClass([self.nextResponder.nextResponder class]) isEqualToString:@"NCNotificationListCell"])
+    bool inBanner = FALSE;
+    if (!self.nextResponder || !self.nextResponder.nextResponder || ![NSStringFromClass([self.nextResponder.nextResponder class]) isEqualToString:@"NCNotificationListCell"]) {
+        inBanner = TRUE; //probably, but it's a safe assumption
+    }
+
+    if (inBanner && !self.sxiNotificationCount) return;
+
+    NCNotificationShortLookView *lv = (NCNotificationShortLookView *)MSHookIvar<UIView *>(self, "_lookView");
+
+    if (inBanner) {
+        self.sxiNotificationCount.hidden = TRUE;
+        if (self.sxiClearAllButton) self.sxiClearAllButton.hidden = TRUE;
+        if (self.sxiCollapseButton) self.sxiCollapseButton.hidden = TRUE;
+
+        if (lv) {
+            lv.customContentView.hidden = TRUE;
+            [lv _headerContentView].hidden = TRUE;
+            lv.alpha = 1.0;
+        }
+
+        return;
+    }
 
     if (!self.sxiNotificationCount) {
         self.sxiNotificationCount = [[UILabel alloc] initWithFrame:[self sxiGetNotificationCountFrame]];
@@ -580,7 +599,6 @@ static void fakeNotifications() {
         [self.view bringSubviewToFront:self.sxiCollapseButton];
     }
 
-    NCNotificationShortLookView *lv = (NCNotificationShortLookView *)MSHookIvar<UIView *>(self, "_lookView");
     if (lv && [lv _notificationContentView] && [lv _notificationContentView].primaryLabel && [lv _notificationContentView].primaryLabel.textColor) {
         self.sxiNotificationCount.textColor = [[lv _notificationContentView].primaryLabel.textColor colorWithAlphaComponent:0.8];
     }
