@@ -1,6 +1,4 @@
-{
-    CLEAR = Limpar;
-    COLLAPSE = Recolher;
-    "MORE_NOTIFICATIONS" = "Mais %d notifica\U00e7\U00f5es";
-    "ONE_MORE_NOTIFICATION" = "Mais %d notifica\U00e7\U00e3o";
-}
+"CLEAR"="Limpar";
+"COLLAPSE"="Recolher";
+"ONE_MORE_NOTIFICATION"="Mais %d notificação";
+"MORE_NOTIFICATIONS"="Mais %d notificações";
