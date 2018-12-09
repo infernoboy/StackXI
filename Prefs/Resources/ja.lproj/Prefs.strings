@@ -1,0 +1,13 @@
+{
+  "ENABLED" = "有効化";
+  "SHOW_BUTTONS" = '"表示を減らす"・"すべて消去"ボタンを表示';
+  "USE_ICONS" = "ボタンに対してアイコンを使用";
+  "RESPRING" = "リスプリング";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "全ての設定をリセットしますか？このアクションは元に戻せません。";
+  "OK" = "OK";
+  "CANCEL" = "キャンセル";
+  "RESET_PREFS" = "設定をリセットし、リスプリング";
+  "SOURCE_CODE" = "ソースコード";
+  "DONATE_TO_OMINOUSNESS" = "Ominousnessに寄付";
+  "SUPPORT_ME" = "サポートしてくれませんか？";
+}
