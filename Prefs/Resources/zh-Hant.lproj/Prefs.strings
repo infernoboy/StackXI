@@ -1,0 +1,13 @@
+{
+  "ENABLED" = "開啟";
+  "SHOW_BUTTONS" = '顯示 "折疊" / "清除所有" 按鈕';
+  "USE_ICONS" = "使用圖標代替文本按鈕";
+  "RESPRING" = "註銷";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "確定要重置所有默認選項嗎？這是不能撤銷的。";
+  "OK" = "好";
+  "CANCEL" = "取消";
+  "RESET_PREFS" = "恢復默認選項并註銷";
+  "SOURCE_CODE" = "源代碼";
+  "DONATE_TO_OMINOUSNESS" = "捐贈Ominousness";
+  "SUPPORT_ME" = "支持我!";
+}

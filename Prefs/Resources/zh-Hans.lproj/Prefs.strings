@@ -1,0 +1,13 @@
+{
+  "ENABLED" = "开启";
+  "SHOW_BUTTONS" = '显示 "折叠" / "清除所有" 按钮';
+  "USE_ICONS" = "使用图标代替文本按钮";
+  "RESPRING" = "注销";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "确定要重置所有默认选项吗？这是不能撤销的。";
+  "OK" = "好";
+  "CANCEL" = "取消";
+  "RESET_PREFS" = "恢复默认选项并注销";
+  "SOURCE_CODE" = "源代码";
+  "DONATE_TO_OMINOUSNESS" = "捐赠Ominousness";
+  "SUPPORT_ME" = "支持我!";
+}
