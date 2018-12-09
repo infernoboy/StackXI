@@ -642,6 +642,7 @@
 -(void)sxiInsertRequest:(NCNotificationRequest *)request;
 -(void)sxiExpand;
 -(void)sxiCollapse;
+-(void)sxiClearStack;
 
 @end
 

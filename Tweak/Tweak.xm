@@ -20,6 +20,7 @@ static NCNotificationListCollectionView *listCollectionView = nil;
 static NCNotificationCombinedListViewController *clvc = nil;
 static bool showButtons = false;
 static bool useIcons = false;
+static bool canUpdate = true;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
@@ -163,6 +164,20 @@ static void fakeNotifications() {
     [listCollectionView sxiCollapse:self.bulletin.sectionID];
 }
 
+%new
+-(void)sxiClearStack {
+    canUpdate = false;
+    for (NCNotificationRequest *request in self.sxiStackedNotificationRequests) {
+        [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
+    }
+    
+    [self.clearAction.actionRunner executeAction:self.clearAction fromOrigin:self withParameters:nil completion:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        canUpdate = true;
+        [listCollectionView reloadData];
+    });
+}
+
 %end
 
 
@@ -224,6 +239,8 @@ static void fakeNotifications() {
 
 %new
 -(void)sxiUpdateList {
+    if (!canUpdate) return;
+    NSLog(@"[StackXI] update list");
     [self.requests removeAllObjects];
 
     NSMutableDictionary* stacks = [[NSMutableDictionary alloc] initWithCapacity:1000];
@@ -473,11 +490,7 @@ static void fakeNotifications() {
 
 -(void)cellClearButtonPressed:(id)arg1 {
     if (self.contentViewController.notificationRequest.sxiIsStack && !self.contentViewController.notificationRequest.sxiIsExpanded) {
-        for (NCNotificationRequest *request in self.contentViewController.notificationRequest.sxiStackedNotificationRequests) {
-            [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
-        }
-        
-        [self.contentViewController.notificationRequest.clearAction.actionRunner executeAction:self.contentViewController.notificationRequest.clearAction fromOrigin:self withParameters:nil completion:nil];
+        [self.contentViewController.notificationRequest sxiClearStack];
         return;
     }
 
@@ -542,11 +555,7 @@ static void fakeNotifications() {
 
 %new
 -(void)sxiClearAll:(UIButton *)button {
-    for (NCNotificationRequest *request in self.notificationRequest.sxiStackedNotificationRequests) {
-        [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
-    }
-    
-    [self.notificationRequest.clearAction.actionRunner executeAction:self.notificationRequest.clearAction fromOrigin:self withParameters:nil completion:nil];
+    [self.notificationRequest sxiClearStack];
 }
 
 %new
@@ -746,6 +755,7 @@ static void fakeNotifications() {
 }
 
 -(void)reloadData {
+    if (!canUpdate) return;
     %orig;
     [priorityList sxiUpdateList];
     [self.collectionViewLayout invalidateLayout];
@@ -895,7 +905,7 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool enabled = [([file objectForKey:@"Enabled"] ?: @(YES)) boolValue];
     showButtons = [([file objectForKey:@"ShowButtons"] ?: @(NO)) boolValue];
     useIcons = [([file objectForKey:@"UseIcons"] ?: @(NO)) boolValue];
-    bool debug = false;
+    bool debug = true;
 
     if (enabled) {
         NSBundle *langBundle = [NSBundle bundleWithPath:LANG_BUNDLE_PATH];
