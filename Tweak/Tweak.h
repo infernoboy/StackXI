@@ -596,6 +596,35 @@
 @property (nonatomic,readonly) NCNotificationActionRunner *actionRunner;   
 @end
 
+@interface NCNotificationOptions : NSObject
+@property (nonatomic,copy,readonly) NSSet * alertSuppressionContexts;                       //@synthesize alertSuppressionContexts=_alertSuppressionContexts - In the implementation block
+@property (nonatomic,copy,readonly) NSString * alternateActionLabel;                        //@synthesize alternateActionLabel=_alternateActionLabel - In the implementation block
+@property (nonatomic,readonly) BOOL dismissAutomatically;                                   //@synthesize dismissAutomatically=_dismissAutomatically - In the implementation block
+@property (nonatomic,readonly) BOOL overridesQuietMode;                                     //@synthesize overridesQuietMode=_overridesQuietMode - In the implementation block
+@property (nonatomic,readonly) BOOL alertsWhenLocked;                                       //@synthesize alertsWhenLocked=_alertsWhenLocked - In the implementation block
+@property (nonatomic,readonly) BOOL addToLockScreenWhenUnlocked;                            //@synthesize addToLockScreenWhenLocked=_addToLockScreenWhenLocked - In the implementation block
+@property (nonatomic,readonly) unsigned long long lockScreenPersistence;                    //@synthesize lockScreenPersistence=_lockScreenPersistence - In the implementation block
+@property (nonatomic,readonly) unsigned long long lockScreenPriority;                       //@synthesize lockScreenPriority=_lockScreenPriority - In the implementation block
+@property (nonatomic,readonly) unsigned long long realertCount;                             //@synthesize realertCount=_realertCount - In the implementation block
+@property (nonatomic,readonly) BOOL suppressesAlertsWhenAppIsActive;                        //@synthesize suppressesAlertsWhenAppIsActive=_suppressesAlertsWhenAppIsActive - In the implementation block
+@property (nonatomic,readonly) BOOL canPlaySound;                                           //@synthesize canPlaySound=_canPlaySound - In the implementation block
+@property (nonatomic,readonly) BOOL canTurnOnDisplay;                                       //@synthesize canTurnOnDisplay=_canTurnOnDisplay - In the implementation block
+@property (nonatomic,readonly) BOOL requestsFullScreenPresentation;                         //@synthesize requestsFullScreenPresentation=_requestsFullScreenPresentation - In the implementation block
+@property (nonatomic,readonly) BOOL preemptsPresentedNotification;                          //@synthesize preemptsPresentedNotification=_preemptsPresentedNotification - In the implementation block
+@property (nonatomic,readonly) BOOL revealsAdditionalContentOnPresentation;                 //@synthesize revealsAdditionalContentOnPresentation=_revealsAdditionalContentOnPresentation - In the implementation block
+@property (nonatomic,readonly) BOOL suppressesTitleWhenLocked;                              //@synthesize suppressesTitleWhenLocked=_suppressesTitleWhenLocked - In the implementation block
+@property (nonatomic,readonly) BOOL suppressesSubtitleWhenLocked;                           //@synthesize suppressesSubtitleWhenLocked=_suppressesSubtitleWhenLocked - In the implementation block
+@property (nonatomic,readonly) BOOL suppressesBodyWhenLocked;                               //@synthesize suppressesBodyWhenLocked=_suppressesBodyWhenLocked - In the implementation block
+@property (nonatomic,readonly) unsigned long long contentPreviewSetting;                    //@synthesize contentPreviewSetting=_contentPreviewSetting - In the implementation block
+@property (nonatomic,readonly) BOOL silencedByMenuButtonPress;                              //@synthesize silencedByMenuButtonPress=_silencedByMenuButtonPress - In the implementation block
+@property (nonatomic,readonly) BOOL overridesPocketMode;                                    //@synthesize overridesPocketMode=_overridesPocketMode - In the implementation block
+@property (nonatomic,readonly) BOOL hideClearActionInList;                                  //@synthesize hideClearActionInList=_hideClearActionInList - In the implementation block
+@property (nonatomic,readonly) unsigned long long messageNumberOfLines;                     //@synthesize messageNumberOfLines=_messageNumberOfLines - In the implementation block
+@property (nonatomic,readonly) BOOL coalescesWhenLocked;                                    //@synthesize coalescesWhenLocked=_coalescesWhenLocked - In the implementation block
+@property (nonatomic,readonly) BOOL preventsAutomaticLock;                                  //@synthesize preventsAutomaticLock=_preventsAutomaticLock - In the implementation block
+@property (nonatomic,readonly) BOOL revealsAdditionalContentIfNoDefaultAction;              //@synthesize revealsAdditionalContentIfNoDefaultAction=_revealsAdditionalContentIfNoDefaultAction - In the implementation block
+@end
+
 @interface NCNotificationRequest : NSObject
 
 @property (nonatomic,copy,readonly) BBBulletin* bulletin;
@@ -606,6 +635,7 @@
 @property (nonatomic,retain) NSMutableOrderedSet *sxiStackedNotificationRequests;
 @property (nonatomic,readonly) NCNotificationAction* clearAction;
 @property (nonatomic,readonly) NSDate* timestamp;
+@property (nonatomic,readonly) NCNotificationOptions* options; 
 
 
 -(void)sxiInsertRequest:(NCNotificationRequest *)request;

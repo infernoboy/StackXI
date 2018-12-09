@@ -238,10 +238,16 @@ static void fakeNotifications() {
                         @"priority" : stacks[req.bulletin.sectionID][@"priority"]
                     };
                 }
+                if (req.options.lockScreenPriority > [stacks[req.bulletin.sectionID][@"priority"] longValue]) {
+                    stacks[req.bulletin.sectionID] = @{
+                        @"timestamp" : stacks[req.bulletin.sectionID][@"timestamp"],
+                        @"priority" : @(req.options.lockScreenPriority)
+                    };
+                }
             } else {
                 stacks[req.bulletin.sectionID] = @{
                     @"timestamp" : req.timestamp,
-                    @"priority" : @(false)
+                    @"priority" : @(req.options.lockScreenPriority)
                 };
             }
         }
@@ -256,7 +262,10 @@ static void fakeNotifications() {
         }
 
         if (b.bulletin.sectionID && a.bulletin.sectionID && stacks[b.bulletin.sectionID] && stacks[a.bulletin.sectionID]) {
-            return [stacks[b.bulletin.sectionID][@"timestamp"] compare:stacks[a.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending;
+            if ([stacks[b.bulletin.sectionID][@"priority"] compare:stacks[a.bulletin.sectionID][@"priority"]] == NSOrderedSame) {
+                return [stacks[b.bulletin.sectionID][@"timestamp"] compare:stacks[a.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending;
+            }
+            return [stacks[b.bulletin.sectionID][@"priority"] compare:stacks[a.bulletin.sectionID][@"priority"]] == NSOrderedDescending;
         }
 
         return [a.bulletin.sectionID localizedStandardCompare:b.bulletin.sectionID] == NSOrderedAscending;
