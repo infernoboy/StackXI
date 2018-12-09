@@ -1,11 +1,12 @@
 {
   "ENABLED" = "Abilitato";
-  "SHOW_BUTTONS" = 'Mostra i pulsanti "Collidi" / "Cancella tutto"';
+  "SHOW_BUTTONS" = 'Mostra i pulsanti "Unisci" / "Cancella"';
+  "USE_ICONS" = "Usa delle icone al posto del testo";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Sei sicuro di voler resettare le impostazioni? Questo comando non può essere annullato.";
   "OK" = "Ok";
   "CANCEL" = "Annulla";
-  "RESET_PREFS" = "Ripristina le impostazioni di default ed effettua un respring";
+  "RESET_PREFS" = "Reimposta ed effettua un respring";
   "SOURCE_CODE" = "Codice sorgente";
   "DONATE_TO_OMINOUSNESS" = "Dona ad Ominousness";
   "SUPPORT_ME" = "Supportami!";
