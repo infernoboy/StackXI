@@ -30,12 +30,12 @@ UIImage * imageWithView(UIView *view) {
     return img;
 }
 
-static void fakeNotification(NSString *sectionID, NSDate *date) {
+static void fakeNotification(NSString *sectionID, NSDate *date, NSString *message) {
     dispatch_sync(__BBServerQueue, ^{
         BBBulletin *bulletin = [[BBBulletin alloc] init];
 
         bulletin.title = @"StackXI";
-        bulletin.message = @"Test notification!";
+        bulletin.message = message;
         bulletin.sectionID = sectionID;
         bulletin.bulletinID = [[NSProcessInfo processInfo] globallyUniqueString];
         bulletin.recordID = [[NSProcessInfo processInfo] globallyUniqueString];
@@ -48,21 +48,21 @@ static void fakeNotification(NSString *sectionID, NSDate *date) {
 }
 
 static void fakeNotifications() {
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
-    fakeNotification(@"com.apple.Music", [NSDate date]);
-    fakeNotification(@"com.apple.MobileSMS", [NSDate date]);
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 1!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 2!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 3!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 4!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 5!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 6!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 7!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 8!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 9!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 10!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 11!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 12!");
+    fakeNotification(@"com.apple.MobileSMS", [NSDate date], @"Test notification 13!");
+    fakeNotification(@"com.apple.Music", [NSDate date], @"Test notification 14!");
+    fakeNotification(@"com.apple.mobilephone", [NSDate date], @"Test notification 15!");
 }
 
 %group StackXIDebug
