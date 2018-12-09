@@ -628,6 +628,7 @@
 @interface NCNotificationRequest : NSObject
 
 @property (nonatomic,copy,readonly) BBBulletin* bulletin;
+@property (nonatomic,copy,readonly) NSString* notificationIdentifier;
 @property (assign,nonatomic) bool sxiIsStack;
 @property (assign,nonatomic) bool sxiIsExpanded;
 @property (assign,nonatomic) bool sxiVisible;
@@ -791,5 +792,11 @@
 @interface NCNotificationListCollectionViewFlowLayout : UICollectionViewFlowLayout
 
 -(id)initialLayoutAttributesForAppearingItemAtIndexPath:(id)arg1;
+
+@end
+
+@interface NCNotificationStore
+
+-(id)removeNotificationRequest:(NCNotificationRequest*)arg1 ;
 
 @end

@@ -341,7 +341,12 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)removeNotificationRequest:(NCNotificationRequest *)request {
-    [self.allRequests removeObject:request];
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
+        if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
+            [self.allRequests removeObjectAtIndex:i];
+        }
+    }
     %orig;
     [listCollectionView reloadData];
     return 0;
@@ -482,6 +487,16 @@ static void fakeNotifications() {
 
 %end
 
+%hook NCNotificationStore
+
+-(id)removeNotificationRequest:(NCNotificationRequest*)arg1 {
+    NSLog(@"[StackXI] store  remove");
+    [priorityList removeNotificationRequest:arg1];
+    return %orig;
+}
+
+%end
+
 %hook NCNotificationShortLookViewController
 
 %property (retain) UILabel* sxiNotificationCount;
@@ -525,13 +540,10 @@ static void fakeNotifications() {
 %new
 -(void)sxiClearAll:(UIButton *)button {
     for (NCNotificationRequest *request in self.notificationRequest.sxiStackedNotificationRequests) {
-        [priorityList.allRequests removeObject:request];
         [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
     }
     
-    [priorityList.allRequests removeObject:self.notificationRequest];
     [self.notificationRequest.clearAction.actionRunner executeAction:self.notificationRequest.clearAction fromOrigin:self withParameters:nil completion:nil];
-    [listCollectionView reloadData];
 }
 
 %new
