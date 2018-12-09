@@ -676,6 +676,7 @@
 @interface NCNotificationPriorityList : NSObject
 
 @property (nonatomic,retain) NSMutableOrderedSet* requests;           //@synthesize requests=_requests - In the implementation block
+@property (nonatomic,retain) NSMutableOrderedSet* allRequests;
 @property (nonatomic,readonly) unsigned long long count; 
 -(NSMutableOrderedSet*)requests;
 -(id)requestAtIndex:(unsigned long long)arg1 ;

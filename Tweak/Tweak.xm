@@ -52,6 +52,14 @@ static void fakeNotifications() {
     fakeNotification(@"com.apple.mobilephone", [NSDate date]);
     fakeNotification(@"com.apple.mobilephone", [NSDate date]);
     fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
+    fakeNotification(@"com.apple.mobilephone", [NSDate date]);
     fakeNotification(@"com.apple.Music", [NSDate date]);
     fakeNotification(@"com.apple.MobileSMS", [NSDate date]);
 }
@@ -203,16 +211,21 @@ static void fakeNotifications() {
 
 %hook NCNotificationPriorityList
 
+%property (nonatomic,retain) NSMutableOrderedSet* allRequests;
+
 -(id)init {
     NSLog(@"[StackXI] Init!");
     id orig = %orig;
     priorityList = self;
+    self.allRequests = [[NSMutableOrderedSet alloc] initWithCapacity:1000];
     return orig;
 }
 
 %new
 -(void)sxiUpdateList {
-    [self.requests sortUsingComparator:(NSComparator)^(id obj1, id obj2){
+    [self.requests removeAllObjects];
+
+    [self.allRequests sortUsingComparator:(NSComparator)^(id obj1, id obj2){
         // TODO: improve sorting logic!
         // i.e. sort also by last date (some magic idk w/e)
 
@@ -229,8 +242,8 @@ static void fakeNotifications() {
 
     NSString *expandedSection = nil;
 
-    for (int i = 0; i < [self.requests count]; i++) {
-        NCNotificationRequest *req = self.requests[i];
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
         if (req.bulletin.sectionID && req.sxiIsExpanded && req.sxiIsStack) {
             expandedSection = req.bulletin.sectionID;
             break;
@@ -241,8 +254,8 @@ static void fakeNotifications() {
     NCNotificationRequest *lastStack = nil;
     NSUInteger sxiPositionInStack = 0;
 
-    for (int i = 0; i < [self.requests count]; i++) {
-        NCNotificationRequest *req = self.requests[i];
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
         if (req.bulletin.sectionID) {
             [req.sxiStackedNotificationRequests removeAllObjects];
             req.sxiIsStack = false;
@@ -266,31 +279,39 @@ static void fakeNotifications() {
                     req.sxiIsExpanded = true;
                 }
 
+                [self.requests addObject:req];
+
                 continue;
             }
 
             if (lastStack && [lastSection isEqualToString:req.bulletin.sectionID]) {
                 [lastStack sxiInsertRequest:req];
             }
+
+            if (req.sxiPositionInStack < 4 || [expandedSection isEqualToString:req.bulletin.sectionID]) {
+                [self.requests addObject:req];
+            }
         } else {
             req.sxiVisible = true;
             req.sxiIsStack = true;
             req.sxiIsExpanded = false;
             req.sxiPositionInStack = 0;
+
+            [self.requests addObject:req];
         }
     }
 }
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
     request.sxiVisible = true;
-    [self.requests addObject:request];
+    [self.allRequests addObject:request];
     [listCollectionView reloadData];
     return 0;
 }
 
 -(NSUInteger)removeNotificationRequest:(NCNotificationRequest *)request {
     %orig;
-    [self.requests removeObject:request];
+    [self.allRequests removeObject:request];
     [listCollectionView reloadData];
     return 0;
 }
@@ -720,15 +741,7 @@ static void fakeNotifications() {
     NSMutableOrderedSet *sectionIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
     [sectionIDs addObject:sectionID];
 
-    for (NCNotificationRequest *request in priorityList.requests) {
-        if (!request.bulletin.sectionID) continue;
-
-        if (![sectionIDs containsObject:request.bulletin.sectionID] && request.sxiIsStack && request.sxiIsExpanded) {
-            [request sxiCollapse];
-            [sectionIDs addObject:request.bulletin.sectionID];
-        }
-    }
-    
+    [self sxiCollapseAll];
     [listCollectionView reloadData];
 
     CGRect frame = CGRectMake(0,0,0,0);
