@@ -905,7 +905,10 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool enabled = [([file objectForKey:@"Enabled"] ?: @(YES)) boolValue];
     showButtons = [([file objectForKey:@"ShowButtons"] ?: @(NO)) boolValue];
     useIcons = [([file objectForKey:@"UseIcons"] ?: @(NO)) boolValue];
-    bool debug = true;
+    bool debug = false;
+    #ifdef DEBUG
+    debug = true;
+    #endif
 
     if (enabled) {
         NSBundle *langBundle = [NSBundle bundleWithPath:LANG_BUNDLE_PATH];
