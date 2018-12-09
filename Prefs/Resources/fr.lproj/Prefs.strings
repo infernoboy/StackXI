@@ -3,11 +3,11 @@
   "SHOW_BUTTONS" = 'Afficher les boutons "Regrouper" / "Tout vider"';
   "USE_ICONS" = "Remplacer le texte de chaque bouton par une icône";
   "RESPRING" = "Respring";
-  "ARE_YOU_SURE_TO_RESET_PREFS" = "Es-tu sûr de vouloir réinitialiser tous tes réglages? Cette action n'est pas réversible.";
-  "OK" = "OUI";
+  "ARE_YOU_SURE_TO_RESET_PREFS" = "Êtes-vous sûr de vouloir réinitialiser tous les réglages? Cette action n'est pas réversible.";
+  "OK" = "Oui";
   "CANCEL" = "Annuler";
-  "RESET_PREFS" = "les paramètres par défaut et effectuer un Respring";
+  "RESET_PREFS" = "Restaurer les paramètres par défaut et effectuer un Respring";
   "SOURCE_CODE" = "Code Source";
   "DONATE_TO_OMINOUSNESS" = "Faire un don à Ominousness";
-  "SUPPORT_ME" = "Soutiens moi!";
+  "SUPPORT_ME" = "Soutenez moi!";
 }
