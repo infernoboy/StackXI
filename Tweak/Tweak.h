@@ -797,6 +797,7 @@
 
 @interface NCNotificationStore
 
--(id)removeNotificationRequest:(NCNotificationRequest*)arg1 ;
+-(id)insertNotificationRequest:(NCNotificationRequest*)arg1;
+-(id)removeNotificationRequest:(NCNotificationRequest*)arg1;
 
 @end

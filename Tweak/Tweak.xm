@@ -347,7 +347,6 @@ static void fakeNotifications() {
             [self.allRequests removeObjectAtIndex:i];
         }
     }
-    %orig;
     [listCollectionView reloadData];
     return 0;
 }
@@ -489,10 +488,14 @@ static void fakeNotifications() {
 
 %hook NCNotificationStore
 
+-(id)insertNotificationRequest:(NCNotificationRequest*)arg1 {
+    [priorityList insertNotificationRequest:arg1];
+    return nil;
+}
+
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1 {
-    NSLog(@"[StackXI] store  remove");
     [priorityList removeNotificationRequest:arg1];
-    return %orig;
+    return nil;
 }
 
 %end
