@@ -9,6 +9,7 @@
 #define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
 #define TEMPDURATION 0.4
+#define MAX_SHOW_BEHIND 3 //amount of blank notifications to show behind each stack
 
 extern dispatch_queue_t __BBServerQueue;
 
@@ -288,7 +289,7 @@ static void fakeNotifications() {
                 [lastStack sxiInsertRequest:req];
             }
 
-            if (req.sxiPositionInStack < 4 || [expandedSection isEqualToString:req.bulletin.sectionID]) {
+            if (req.sxiPositionInStack <= MAX_SHOW_BEHIND || [expandedSection isEqualToString:req.bulletin.sectionID]) {
                 [self.requests addObject:req];
             }
         } else {
@@ -377,7 +378,7 @@ static void fakeNotifications() {
     NCNotificationListCell* cell = %orig;
     
     if (!cell.contentViewController.notificationRequest.sxiVisible) {
-        if (cell.contentViewController.notificationRequest.sxiPositionInStack > 3) {
+        if (cell.contentViewController.notificationRequest.sxiPositionInStack > MAX_SHOW_BEHIND) {
             cell.hidden = YES; 
         } else {
             cell.hidden = NO;
@@ -401,7 +402,7 @@ static void fakeNotifications() {
     if (indexPath.section == 0) {
         NCNotificationRequest *request = [self.notificationPriorityList.requests objectAtIndex:indexPath.row];
         if (!request.sxiVisible) {
-            if (request.sxiPositionInStack > 3) {
+            if (request.sxiPositionInStack > MAX_SHOW_BEHIND) {
                 return CGSizeMake(orig.width,0);
             } else {
                 return CGSizeMake(orig.width,1);
@@ -741,7 +742,16 @@ static void fakeNotifications() {
     NSMutableOrderedSet *sectionIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
     [sectionIDs addObject:sectionID];
 
-    [self sxiCollapseAll];
+    // DON'T REPLACE THIS WITH sxiCollapseAll; it doesn't work because of that line above
+    for (NCNotificationRequest *request in priorityList.requests) {
+        if (!request.bulletin.sectionID) continue;
+
+        if (![sectionIDs containsObject:request.bulletin.sectionID] && request.sxiIsStack && request.sxiIsExpanded) {	
+            [request sxiCollapse];	
+            [sectionIDs addObject:request.bulletin.sectionID];	
+        }	
+    }
+
     [listCollectionView reloadData];
 
     CGRect frame = CGRectMake(0,0,0,0);
