@@ -421,7 +421,11 @@ static void fakeNotifications() {
 %new
 -(void)sxiClearAll {
     canUpdate = false;
-    [priorityList.allRequests removeAllObjects];
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
+        [req sxiClear:false];
+    }
+    [self.allRequests removeAllObjects];
     [listCollectionView sxiClearAll];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         canUpdate = true;
