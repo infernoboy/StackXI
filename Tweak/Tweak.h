@@ -789,6 +789,8 @@
 -(NSMutableSet*)allNotificationRequests;
 -(void)removeNotificationRequest:(id)arg1 forCoalescedNotification:(id)arg2 ;
 -(void)removeNotificationRequestFromRecentsSection:(id)arg1 forCoalescedNotification:(id)arg2;
+-(void)_clearAllPriorityListNotificationRequests;
+-(void)_clearAllSectionListNotificationRequests;
 
 @end
 

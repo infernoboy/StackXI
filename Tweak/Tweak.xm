@@ -490,6 +490,18 @@ static void fakeNotifications() {
     return orig;
 }
 
+-(void)_clearAllPriorityListNotificationRequests {
+    [priorityList.allRequests removeAllObjects];
+    canUpdate = true;
+    [listCollectionView reloadData];
+}
+
+-(void)_clearAllSectionListNotificationRequests {
+    [priorityList.allRequests removeAllObjects];
+    canUpdate = true;
+    [listCollectionView reloadData];
+}
+
 %end
 
 %hook NCNotificationListCell
