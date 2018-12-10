@@ -368,9 +368,21 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
-    request.sxiVisible = true;
-    [self.allRequests addObject:request];
-    [listCollectionView reloadData];
+    bool found = false;
+
+    for (int i = 0; i < [self.allRequests count]; i++) {
+        NCNotificationRequest *req = self.allRequests[i];
+        if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        request.sxiVisible = true;
+        [self.allRequests addObject:request];
+        [listCollectionView reloadData];
+    }
     return 0;
 }
 
@@ -545,7 +557,7 @@ static void fakeNotifications() {
 
 -(id)insertNotificationRequest:(NCNotificationRequest*)arg1 {
     [priorityList insertNotificationRequest:arg1];
-    return nil;
+    return %orig;
 }
 
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1 {
