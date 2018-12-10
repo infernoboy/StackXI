@@ -944,16 +944,16 @@ static void fakeNotifications() {
     }
 }
 
--(void)deleteItemsAtIndexPaths:(id)arg1 { }//[self reloadData]; }
--(void)insertItemsAtIndexPaths:(id)arg1 { }//[self reloadData]; }
--(void)reloadItemsAtIndexPaths:(id)arg1 { }//[self reloadData]; }
--(void)reloadSections:(id)arg1 { }//[self reloadData]; }
--(void)deleteSections:(id)arg1 { }//[self reloadData]; }
--(void)insertSections:(id)arg1 { }//[self reloadData]; }
--(void)moveItemAtIndexPath:(id)prevPath toIndexPath:(id)newPath { }//[self reloadData]; }
+-(void)deleteItemsAtIndexPaths:(id)arg1 { [self reloadData]; }
+-(void)insertItemsAtIndexPaths:(id)arg1 { [self reloadData]; }
+-(void)reloadItemsAtIndexPaths:(id)arg1 { [self reloadData]; }
+-(void)reloadSections:(id)arg1 { [self reloadData]; }
+-(void)deleteSections:(id)arg1 { [self reloadData]; }
+-(void)insertSections:(id)arg1 { [self reloadData]; }
+-(void)moveItemAtIndexPath:(id)prevPath toIndexPath:(id)newPath { [self reloadData]; }
 
 -(void)performBatchUpdates:(id)updates completion:(void (^)(bool finished))completion {
-	//[self reloadData];
+	[self reloadData];
 	if (completion) completion(true);
 }
 
