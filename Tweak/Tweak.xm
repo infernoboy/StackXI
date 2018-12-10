@@ -550,7 +550,7 @@ static void fakeNotifications() {
 
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1 {
     [priorityList removeNotificationRequest:arg1];
-    return nil;
+    return %orig;
 }
 
 %end
