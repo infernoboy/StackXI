@@ -406,6 +406,17 @@ static void fakeNotifications() {
     return nil;
 }
 
+%new
+-(void)sxiClearAll {
+    canUpdate = false;
+    [priorityList.allRequests removeAllObjects];
+    [listCollectionView sxiClearAll];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        canUpdate = true;
+        [listCollectionView reloadData];
+    });
+}
+
 %end
 
 %hook NCNotificationCombinedListViewController
@@ -491,15 +502,11 @@ static void fakeNotifications() {
 }
 
 -(void)_clearAllPriorityListNotificationRequests {
-    [priorityList.allRequests removeAllObjects];
-    canUpdate = true;
-    [listCollectionView reloadData];
+    [priorityList sxiClearAll];
 }
 
 -(void)_clearAllSectionListNotificationRequests {
-    [priorityList.allRequests removeAllObjects];
-    canUpdate = true;
-    [listCollectionView reloadData];
+    [priorityList sxiClearAll];
 }
 
 %end
@@ -810,6 +817,18 @@ static void fakeNotifications() {
         [sbdbclvc _setListHasContent:YES];
     } else {
         [sbdbclvc _setListHasContent:NO];
+    }
+}
+
+%new
+-(void)sxiClearAll {
+    for (NSInteger row = 0; row < [self numberOfItemsInSection:0]; row++) {
+        id c = [self _visibleCellForIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
+        if (!c) continue;
+        NCNotificationListCell* cell = (NCNotificationListCell*)c;
+        [UIView animateWithDuration:CLEAR_DURATION animations:^{
+            cell.alpha = 0.0;
+        }];
     }
 }
 

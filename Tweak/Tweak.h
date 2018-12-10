@@ -731,6 +731,7 @@
 -(id)_clearRequestsWithPersistence:(unsigned long long)arg1 ;
 -(id)_identifierForNotificationRequest:(id)arg1 ;
 -(id)clearAllRequests;
+-(void)sxiClearAll;
 
 @end
 
@@ -744,6 +745,7 @@
 -(void)sxiCollapse:(NSString *)sectionID;
 -(void)sxiCollapseAll;
 -(void)sxiClear:(NSString *)notificationIdentifier;
+-(void)sxiClearAll;
 
 @end
 
