@@ -642,6 +642,7 @@
 -(void)sxiInsertRequest:(NCNotificationRequest *)request;
 -(void)sxiExpand;
 -(void)sxiCollapse;
+-(void)sxiClear:(BOOL)reload;
 -(void)sxiClearStack;
 
 @end
@@ -742,6 +743,7 @@
 -(void)sxiExpand:(NSString *)sectionID;
 -(void)sxiCollapse:(NSString *)sectionID;
 -(void)sxiCollapseAll;
+-(void)sxiClear:(NSString *)notificationIdentifier;
 
 @end
 

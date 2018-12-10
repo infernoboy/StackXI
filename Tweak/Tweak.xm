@@ -9,6 +9,7 @@
 #define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
 #define TEMPDURATION 0.4
+#define CLEAR_DURATION 0.2
 #define MAX_SHOW_BEHIND 3 //amount of blank notifications to show behind each stack
 
 extern dispatch_queue_t __BBServerQueue;
@@ -165,14 +166,30 @@ static void fakeNotifications() {
 }
 
 %new
+-(void)sxiClear:(BOOL)reload {
+    if (reload) {
+        canUpdate = false;
+    }
+    [priorityList removeNotificationRequest:self];
+    [self.clearAction.actionRunner executeAction:self.clearAction fromOrigin:self withParameters:nil completion:nil];
+    [listCollectionView sxiClear:self.notificationIdentifier];
+    if (reload) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            canUpdate = true;
+            [listCollectionView reloadData];
+        });
+    }
+}
+
+%new
 -(void)sxiClearStack {
     canUpdate = false;
     for (NCNotificationRequest *request in self.sxiStackedNotificationRequests) {
-        [request.clearAction.actionRunner executeAction:request.clearAction fromOrigin:self withParameters:nil completion:nil];
+        [request sxiClear:false];
     }
     
-    [self.clearAction.actionRunner executeAction:self.clearAction fromOrigin:self withParameters:nil completion:nil];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    [self sxiClear:false];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         canUpdate = true;
         [listCollectionView reloadData];
     });
@@ -358,12 +375,18 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)removeNotificationRequest:(NCNotificationRequest *)request {
-    for (int i = 0; i < [self.allRequests count]; i++) {
-        NCNotificationRequest *req = self.allRequests[i];
-        if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
-            [self.allRequests removeObjectAtIndex:i];
+    if (!request) return 0;
+
+    if (request.notificationIdentifier) {
+        for (int i = 0; i < [self.allRequests count]; i++) {
+            NCNotificationRequest *req = self.allRequests[i];
+            if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
+                [self.allRequests removeObjectAtIndex:i];
+            }
         }
     }
+
+    [self.allRequests removeObject:request];
     [listCollectionView reloadData];
     return 0;
 }
@@ -494,7 +517,7 @@ static void fakeNotifications() {
         return;
     }
 
-    %orig;
+    [self.contentViewController.notificationRequest sxiClear:true];
 }
 
 %end
@@ -775,6 +798,21 @@ static void fakeNotifications() {
         [sbdbclvc _setListHasContent:YES];
     } else {
         [sbdbclvc _setListHasContent:NO];
+    }
+}
+
+%new
+-(void)sxiClear:(NSString *)notificationIdentifier {
+    for (NSInteger row = 0; row < [self numberOfItemsInSection:0]; row++) {
+        id c = [self _visibleCellForIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
+        if (!c) continue;
+        NCNotificationListCell* cell = (NCNotificationListCell*)c;
+        if ([notificationIdentifier isEqualToString:cell.contentViewController.notificationRequest.notificationIdentifier]) {
+            
+            [UIView animateWithDuration:CLEAR_DURATION animations:^{
+                cell.alpha = 0.0;
+            }];
+        }
     }
 }
 
