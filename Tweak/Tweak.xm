@@ -804,7 +804,12 @@ static void fakeNotifications() {
 }
 
 - (void)_handleTapOnView:(id)arg1 {
-    if (self.notificationRequest.sxiIsStack && !self.notificationRequest.sxiIsExpanded && [self.notificationRequest.sxiStackedNotificationRequests count] > 0) {
+    bool inBanner = FALSE;
+    if (!self.nextResponder || !self.nextResponder.nextResponder || ![NSStringFromClass([self.nextResponder.nextResponder class]) isEqualToString:@"NCNotificationListCell"]) {
+        inBanner = TRUE; //probably, but it's a safe assumption
+    }
+
+    if (!inBanner && self.notificationRequest.sxiIsStack && !self.notificationRequest.sxiIsExpanded && [self.notificationRequest.sxiStackedNotificationRequests count] > 0) {
         [UIView animateWithDuration:TEMPDURATION animations:^{
             self.sxiNotificationCount.alpha = 0;
         }];
