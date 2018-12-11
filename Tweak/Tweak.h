@@ -769,6 +769,7 @@
 -(id)initWithFrame:(CGRect)arg1 ;
 
 -(void)cellClearButtonPressed:(id)arg1;
+-(void)_executeClearAction;
 
 @end
 
