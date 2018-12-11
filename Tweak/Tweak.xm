@@ -19,6 +19,8 @@ static BBServer *bbServer = nil;
 static NCNotificationPriorityList *priorityList = nil;
 static NCNotificationListCollectionView *listCollectionView = nil;
 static NCNotificationCombinedListViewController *clvc = nil;
+static NCNotificationStore *store = nil;
+static NCNotificationDispatcher *dispatcher = nil;
 static bool showButtons = false;
 static bool useIcons = false;
 static bool canUpdate = true;
@@ -171,7 +173,8 @@ static void fakeNotifications() {
         canUpdate = false;
     }
     [priorityList removeNotificationRequest:self];
-    [self.clearAction.actionRunner executeAction:self.clearAction fromOrigin:self withParameters:nil completion:nil];
+    //[self.clearAction.actionRunner executeAction:self.clearAction fromOrigin:self withParameters:nil completion:nil]; - TODO: check if this helps sometimes
+    [dispatcher destination:nil requestsClearingNotificationRequests:@[self]];
     [listCollectionView sxiClear:self.notificationIdentifier];
     if (reload) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -201,7 +204,7 @@ static void fakeNotifications() {
 %hook NCNotificationSectionList
 
 -(id)removeNotificationRequest:(id)arg1 {
-    [priorityList removeNotificationRequest:(NCNotificationRequest *)arg1];
+    //[priorityList removeNotificationRequest:(NCNotificationRequest *)arg1];
     return nil;
 }
 
@@ -257,7 +260,6 @@ static void fakeNotifications() {
 %new
 -(void)sxiUpdateList {
     if (!canUpdate) return;
-    NSLog(@"[StackXI] update list");
     [self.requests removeAllObjects];
 
     NSMutableDictionary* stacks = [[NSMutableDictionary alloc] initWithCapacity:1000];
@@ -421,10 +423,7 @@ static void fakeNotifications() {
 %new
 -(void)sxiClearAll {
     canUpdate = false;
-    for (int i = 0; i < [self.allRequests count]; i++) {
-        NCNotificationRequest *req = self.allRequests[i];
-        [req sxiClear:false];
-    }
+    [dispatcher destination:nil requestsClearingNotificationRequests:[self.allRequests array]];
     [self.allRequests removeAllObjects];
     [listCollectionView sxiClearAll];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, CLEAR_DURATION * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -557,7 +556,29 @@ static void fakeNotifications() {
 
 %end
 
+%hook NCNotificationDispatcher
+
+-(id)init {
+    id orig = %orig;
+    dispatcher = self;
+    return orig;
+}
+
+-(id)initWithAlertingController:(id)arg1 {
+    id orig = %orig;
+    dispatcher = self;
+    return orig;
+}
+
+%end
+
 %hook NCNotificationStore
+
+-(id)init {
+    id orig = %orig;
+    store = self;
+    return orig;
+}
 
 -(id)insertNotificationRequest:(NCNotificationRequest*)arg1 {
     [priorityList insertNotificationRequest:arg1];
@@ -577,12 +598,6 @@ static void fakeNotifications() {
 %property (retain) UIButton* sxiClearAllButton;
 %property (retain) UIButton* sxiCollapseButton;
 %property (assign,nonatomic) BOOL sxiIsLTR;
-
--(id)init {
-    id orig = %orig;
-    NSLog(@"[StackXI] shortlook view init");
-    return orig;
-}
 
 -(void)viewWillAppear:(bool)whatever {
     %orig;
@@ -789,8 +804,6 @@ static void fakeNotifications() {
 }
 
 - (void)_handleTapOnView:(id)arg1 {
-    NSLog(@"[StackXI] tap");
-    
     if (self.notificationRequest.sxiIsStack && !self.notificationRequest.sxiIsExpanded && [self.notificationRequest.sxiStackedNotificationRequests count] > 0) {
         [UIView animateWithDuration:TEMPDURATION animations:^{
             self.sxiNotificationCount.alpha = 0;

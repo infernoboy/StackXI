@@ -804,7 +804,93 @@
 
 @interface NCNotificationStore
 
+-(id)init;
 -(id)insertNotificationRequest:(NCNotificationRequest*)arg1;
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1;
 
+@end
+
+@interface NCNotificationDispatcher : NSObject
+
+-(id)init;
+-(void)registerDestination:(id)arg1 ;
+-(void)unregisterDestination:(id)arg1 ;
+-(void)setDestination:(id)arg1 enabled:(BOOL)arg2 ;
+-(void)destination:(id)arg1 requestPermissionToExecuteAction:(id)arg2 forNotificationRequest:(id)arg3 withParameters:(id)arg4 completion:(/*^block*/id)arg5 ;
+-(void)destination:(id)arg1 executeAction:(id)arg2 forNotificationRequest:(id)arg3 requestAuthentication:(BOOL)arg4 withParameters:(id)arg5 completion:(/*^block*/id)arg6 ;
+-(id)notificationSectionSettingsForDestination:(id)arg1 ;
+-(id)notificationSectionSettingsForDestination:(id)arg1 forSectionIdentifier:(id)arg2 ;
+-(void)destination:(id)arg1 requestsClearingNotificationRequests:(id)arg2 ;
+-(void)destination:(id)arg1 requestsClearingNotificationRequests:(id)arg2 fromDestinations:(id)arg3 ;
+-(void)destination:(id)arg1 requestsClearingNotificationRequestsFromDate:(id)arg2 toDate:(id)arg3 inSections:(id)arg4 ;
+-(void)destination:(id)arg1 requestsClearingNotificationRequestsInSections:(id)arg2 ;
+-(void)destinationDidBecomeReadyToReceiveNotifications:(id)arg1 ;
+-(void)destination:(id)arg1 didBecomeReadyToReceiveNotificationsPassingTest:(/*^block*/id)arg2 ;
+-(void)destination:(id)arg1 didBecomeReadyToReceiveNotificationsCoalescedWith:(id)arg2 ;
+-(void)destination:(id)arg1 willPresentNotificationRequest:(id)arg2 suppressAlerts:(BOOL)arg3 ;
+-(void)destination:(id)arg1 didPresentNotificationRequest:(id)arg2 ;
+-(void)destination:(id)arg1 didDismissNotificationRequest:(id)arg2 ;
+-(void)destination:(id)arg1 willPresentNotificationRequest:(id)arg2 ;
+-(NCNotificationStore *)notificationStore;
+-(void)_performOperationForRequestDestinations:(id)arg1 block:(/*^block*/id)arg2 ;
+-(BOOL)_isRegisteredDestination:(id)arg1 ;
+-(void)_registerAlertDestination:(id)arg1 ;
+-(void)_registerDestination:(id)arg1 ;
+-(id)initWithAlertingController:(id)arg1 ;
+-(void)removeDispatcherSourceDelegate:(id)arg1 ;
+-(void)setNotificationStore:(NCNotificationStore *)arg1 ;
+-(void)addDispatcherSourceDelegate:(id)arg1 ;
+-(void)postNotificationWithRequest:(id)arg1 ;
+-(void)modifyNotificationWithRequest:(id)arg1 ;
+-(void)withdrawNotificationWithRequest:(id)arg1 ;
+-(void)updateNotificationSectionSettings:(id)arg1 ;
+-(void)removeNotificationSectionWithIdentifier:(id)arg1 ;
+@end
+
+@interface NCNotificationChronologicalList : NSObject
+
+@property (nonatomic,readonly) unsigned long long sectionCount; 
+-(unsigned long long)sectionCount;
+-(id)init;
+-(NSString *)debugDescription;
+-(void)setSections:(NSMutableArray *)arg1 ;
+-(NSMutableArray *)sections;
+-(void)_handleLocaleChange;
+-(void)_handleTimeZoneChange;
+-(id)succinctDescription;
+-(id)descriptionWithMultilinePrefix:(id)arg1 ;
+-(id)descriptionBuilderWithMultilinePrefix:(id)arg1 ;
+-(id)succinctDescriptionBuilder;
+-(id)allNotificationRequests;
+-(BOOL)containsNotificationRequest:(id)arg1 ;
+-(id)removeNotificationRequest:(id)arg1 ;
+-(id)insertNotificationRequest:(id)arg1 ;
+-(id)modifyNotificationRequest:(id)arg1 ;
+-(id)notificationRequestAtIndexPath:(id)arg1 ;
+-(void)hideRequestsForNotificationSectionIdentifier:(id)arg1 subSectionIdentifier:(id)arg2 ;
+-(void)showRequestsForNotificationSectionIdentifier:(id)arg1 subSectionIdentifier:(id)arg2 ;
+-(unsigned long long)rowCountForSectionIndex:(unsigned long long)arg1 ;
+-(id)titleForSectionIndex:(unsigned long long)arg1 ;
+-(id)identifierForSectionIndex:(unsigned long long)arg1 ;
+-(id)notificationRequestsForSectionIdentifier:(id)arg1 ;
+-(id)dateForSectionIdentifier:(id)arg1 ;
+-(void)clearSectionWithIdentifier:(id)arg1 ;
+-(void)clearAllSections;
+-(void)_updateListForDateChange;
+-(id)_sectionContainingNotificationRequest:(id)arg1 ;
+-(id)_existingSectionForNotificationRequest:(id)arg1 ;
+-(id)_newSectionForNotificationRequest:(id)arg1 ;
+-(unsigned long long)_insertionIndexForSection:(id)arg1 ;
+-(id)_targetIndexPathForNotificationRequest:(id)arg1 ;
+-(long long)sectionIndexForListSectionIdentifier:(id)arg1 ;
+-(void)_reloadSectionHeaders;
+-(void)_rebuildSectionsList;
+-(id)_titleForDate:(id)arg1 ;
+-(id)_allNotificationRequestsFromSectionIndex:(unsigned long long)arg1 ;
+-(id)_simpleDateFromDate:(id)arg1 ;
+-(id)_identifierForDate:(id)arg1 ;
+-(id)_newSectionForDate:(id)arg1 ;
+-(id)_existingSectionForDate:(id)arg1 ;
+-(id)notificationRequestsAtIndexPaths:(id)arg1 ;
+-(id)_completeIndexSet;
 @end
