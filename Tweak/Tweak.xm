@@ -234,7 +234,7 @@ static void fakeNotifications() {
 %hook NCNotificationChronologicalList
 
 -(id)removeNotificationRequest:(id)arg1 {
-    [priorityList removeNotificationRequest:(NCNotificationRequest *)arg1];
+    //[priorityList removeNotificationRequest:(NCNotificationRequest *)arg1];
     return nil;
 }
 
@@ -406,8 +406,12 @@ static void fakeNotifications() {
     return 0;
 }
 
+-(id)_clearRequestsWithPersistence:(unsigned long long)arg1 {
+    return nil;
+}
+
 -(id)clearNonPersistentRequests {
-    return %orig;
+    return nil;
 }
 
 -(id)clearRequestsPassingTest:(id)arg1 {
@@ -523,6 +527,10 @@ static void fakeNotifications() {
 
 -(void)_clearAllSectionListNotificationRequests {
     [priorityList sxiClearAll];
+}
+
+-(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3 {
+    //do nothing
 }
 
 %end

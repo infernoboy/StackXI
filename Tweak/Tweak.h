@@ -794,6 +794,7 @@
 -(void)removeNotificationRequestFromRecentsSection:(id)arg1 forCoalescedNotification:(id)arg2;
 -(void)_clearAllPriorityListNotificationRequests;
 -(void)_clearAllSectionListNotificationRequests;
+-(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3;
 
 @end
 
