@@ -370,6 +370,7 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
+    %orig;
     bool found = false;
 
     for (int i = 0; i < [self.allRequests count]; i++) {
