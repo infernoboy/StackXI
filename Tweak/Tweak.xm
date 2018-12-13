@@ -546,6 +546,10 @@ static void fakeNotifications() {
     }
 }
 
+-(void)cellClearButtonPressed:(id)arg1 {
+    [self _executeClearAction];
+}
+
 -(void)_executeClearAction {
     if (self.contentViewController.notificationRequest.sxiIsStack && !self.contentViewController.notificationRequest.sxiIsExpanded) {
         [self.contentViewController.notificationRequest sxiClearStack];
