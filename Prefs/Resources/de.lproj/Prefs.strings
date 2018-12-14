@@ -1,12 +1,13 @@
 {
   "ENABLED" = "Aktiviert";
   "SHOW_BUTTONS" = 'Zeige "Weniger" / "Alle löschen" Buttons';
+  "USE_ICONS" = "Verwende Symbole anstelle von Text für Buttons";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Sind Sie sicher, dass Sie alle Einstellungen zurücksetzen möchten? Dies kann nicht rückgängig gemacht werden.";
   "OK" = "OK";
   "CANCEL" = "Abbrechen";
-  "RESET_PREFS" = "Standardeinstellungen wiederherstellen und respringen";
+  "RESET_PREFS" = "Einstellungen zurücksetzen und respringen";
   "SOURCE_CODE" = "Quellcode";
-  "DONATE_TO_OMINOUSNESS" = "Spenden an Ominousness";
-  "SUPPORT_ME" = "Unterstützen Sie mich!";
+  "DONATE_TO_OMINOUSNESS" = "Spende an Ominousness";
+  "SUPPORT_ME" = "Unterstütze mich!";
 }
