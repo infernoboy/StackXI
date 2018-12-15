@@ -8,9 +8,9 @@
 			<key>cellClass</key>
 			<string>HBTwitterCell</string>
 			<key>label</key>
-			<string>Ominousness</string>
+			<string>Nepeta</string>
 			<key>user</key>
-			<string>TheOminousness</string>
+			<string>NepetaDev</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -60,7 +60,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>StackXI by Ominousness</string>
+			<string>StackXI by Nepeta</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -103,13 +103,13 @@
 			<key>subtitle</key>
 			<string>SOURCE_CODE</string>
 			<key>url</key>
-			<string>https://github.com/Ominousness/StackXI</string>
+			<string>https://github.com/Nepeta/StackXI</string>
 		</dict>
 		<dict>
 			<key>cellClass</key>
 			<string>HBLinkTableCell</string>
 			<key>label</key>
-			<string>DONATE_TO_OMINOUSNESS</string>
+			<string>DONATE_TO_NEPETA</string>
 			<key>subtitle</key>
 			<string>SUPPORT_ME</string>
 			<key>url</key>

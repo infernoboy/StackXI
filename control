@@ -5,6 +5,6 @@ Version: 0.4.5
 Architecture: iphoneos-arm
 Conflicts: com.ioscreatix.intelix, com.ioscreatix.intelixbeta
 Description: Grouped notifications, iOS 12 style.
-Maintainer: Ominousness <ominousness@protonmail.com>
-Author: Ominousness <ominousness@protonmail.com>
+Maintainer: Nepeta <ominousness@protonmail.com>
+Author: Nepeta <ominousness@protonmail.com>
 Section: Tweaks
