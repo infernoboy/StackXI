@@ -776,6 +776,13 @@
 @interface NCNotificationListSectionRevealHintView : UIView
 @end
 
+@interface NCNotificationListViewController : UICollectionViewController
+
+-(BOOL)hasVisibleContent;
+-(void)clearAllNonPersistent;
+
+@end
+
 @interface NCNotificationCombinedListViewController : UIViewController
 
 @property (nonatomic, retain) NCNotificationPriorityList *notificationPriorityList;
@@ -795,6 +802,8 @@
 -(void)_clearAllPriorityListNotificationRequests;
 -(void)_clearAllSectionListNotificationRequests;
 -(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3;
+-(BOOL)hasContent;
+-(void)clearAllNonPersistent;
 
 @end
 

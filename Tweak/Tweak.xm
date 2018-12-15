@@ -439,12 +439,32 @@ static void fakeNotifications() {
 
 %end
 
+%hook NCNotificationListViewController
+
+-(void)clearAllNonPersistent {
+    // nothing
+}
+
+-(BOOL)hasVisibleContent {
+    return [priorityList.requests count] > 0;
+}
+
+%end
+
 %hook NCNotificationCombinedListViewController
 
 -(id)init {
     id orig = %orig;
     clvc = self;
     return orig;
+}
+
+-(void)clearAllNonPersistent {
+    // nothing
+}
+
+-(BOOL)hasContent {
+    return true;
 }
 
 -(void)viewWillAppear:(bool)animated {
