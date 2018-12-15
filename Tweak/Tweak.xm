@@ -370,7 +370,6 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
-    %orig;
     bool found = false;
 
     for (int i = 0; i < [self.allRequests count]; i++) {
@@ -382,6 +381,7 @@ static void fakeNotifications() {
     }
 
     if (!found) {
+        %orig;
         request.sxiVisible = true;
         [self.allRequests addObject:request];
         [listCollectionView reloadData];
