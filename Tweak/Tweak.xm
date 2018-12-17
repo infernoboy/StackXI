@@ -465,9 +465,9 @@ static void fakeNotifications() {
     // nothing
 }
 
--(BOOL)hasContent {
+/*-(BOOL)hasContent {
     return true;
-}
+}*/
 
 -(void)viewWillAppear:(bool)animated {
     [listCollectionView sxiCollapseAll];
