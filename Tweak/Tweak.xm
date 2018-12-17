@@ -266,7 +266,7 @@ static void fakeNotifications() {
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
-        if (req.bulletin.sectionID) {
+        if (req.bulletin && req.bulletin.sectionID && req.timestamp && req.options && req.options.lockScreenPriority) {
             if (stacks[req.bulletin.sectionID]) {
                 if ([req.timestamp compare:stacks[req.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending) {
                     stacks[req.bulletin.sectionID] = @{
@@ -370,6 +370,8 @@ static void fakeNotifications() {
 }
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
+    if (!request || !request.notificationIdentifier) return 0;
+
     bool found = false;
 
     for (int i = 0; i < [self.allRequests count]; i++) {
