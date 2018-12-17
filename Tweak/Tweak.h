@@ -637,9 +637,11 @@
 @property (nonatomic,readonly) NCNotificationAction* clearAction;
 @property (nonatomic,readonly) NSDate* timestamp;
 @property (nonatomic,readonly) NCNotificationOptions* options; 
+@property (nonatomic, readonly, copy) NSString *threadIdentifier;
 
 
 -(void)sxiInsertRequest:(NCNotificationRequest *)request;
+-(NSString *)sxiStackID;
 -(void)sxiExpand;
 -(void)sxiCollapse;
 -(void)sxiClear:(BOOL)reload;

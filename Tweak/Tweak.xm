@@ -8,9 +8,9 @@
 #define ICON_CLEAR_ALL_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/SXIClearAll.png"
 #define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
-#define TEMPDURATION 0.4
+#define TEMPDURATION 0.3
 #define CLEAR_DURATION 0.2
-#define MAX_SHOW_BEHIND 3 //amount of blank notifications to show behind each stack
+#define MAX_SHOW_BEHIND 2 //amount of blank notifications to show behind each stack
 
 extern dispatch_queue_t __BBServerQueue;
 
@@ -24,6 +24,7 @@ static NCNotificationDispatcher *dispatcher = nil;
 static bool showButtons = false;
 static bool useIcons = false;
 static bool canUpdate = true;
+static bool organizeByThread = false;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
@@ -145,14 +146,27 @@ static void fakeNotifications() {
 }
 
 %new
+-(NSString *)sxiStackID {
+    if (organizeByThread && ![self.threadIdentifier hasPrefix:@"req-"]) {
+        return [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.threadIdentifier];
+    } else {
+        return self.bulletin.sectionID;
+    }
+}
+
+%new
 -(void)sxiExpand {
     self.sxiIsExpanded = true;
 
+    NSString *stackID = [self sxiStackID];
+
     for (NCNotificationRequest *request in self.sxiStackedNotificationRequests) {
-        request.sxiVisible = true;
+        if ([stackID isEqualToString:[request sxiStackID]]) {
+            request.sxiVisible = true;
+        }
     }
-    
-    [listCollectionView sxiExpand:self.bulletin.sectionID];
+
+    [listCollectionView sxiExpand:stackID];
 }
 
 
@@ -160,11 +174,15 @@ static void fakeNotifications() {
 -(void)sxiCollapse {
     self.sxiIsExpanded = false;
 
+    NSString *stackID = [self sxiStackID];
+
     for (NCNotificationRequest *request in self.sxiStackedNotificationRequests) {
-        request.sxiVisible = false;
+        if ([stackID isEqualToString:[request sxiStackID]]) {
+            request.sxiVisible = false;
+        }
     }
-    
-    [listCollectionView sxiCollapse:self.bulletin.sectionID];
+
+    [listCollectionView sxiCollapse:stackID];
 }
 
 %new
@@ -267,21 +285,23 @@ static void fakeNotifications() {
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
         if (req.bulletin && req.bulletin.sectionID && req.timestamp && req.options && req.options.lockScreenPriority) {
-            if (stacks[req.bulletin.sectionID]) {
-                if ([req.timestamp compare:stacks[req.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending) {
-                    stacks[req.bulletin.sectionID] = @{
+            NSString *stackID = [req sxiStackID];
+
+            if (stacks[stackID]) {
+                if ([req.timestamp compare:stacks[stackID][@"timestamp"]] == NSOrderedDescending) {
+                    stacks[stackID] = @{
                         @"timestamp" : req.timestamp,
-                        @"priority" : stacks[req.bulletin.sectionID][@"priority"]
+                        @"priority" : stacks[stackID][@"priority"]
                     };
                 }
-                if (req.options.lockScreenPriority > [stacks[req.bulletin.sectionID][@"priority"] longValue]) {
-                    stacks[req.bulletin.sectionID] = @{
-                        @"timestamp" : stacks[req.bulletin.sectionID][@"timestamp"],
+                if (req.options.lockScreenPriority > [stacks[stackID][@"priority"] longValue]) {
+                    stacks[stackID] = @{
+                        @"timestamp" : stacks[stackID][@"timestamp"],
                         @"priority" : @(req.options.lockScreenPriority)
                     };
                 }
             } else {
-                stacks[req.bulletin.sectionID] = @{
+                stacks[stackID] = @{
                     @"timestamp" : req.timestamp,
                     @"priority" : @(req.options.lockScreenPriority)
                 };
@@ -292,27 +312,31 @@ static void fakeNotifications() {
     [self.allRequests sortUsingComparator:(NSComparator)^(id obj1, id obj2){
         NCNotificationRequest *a = (NCNotificationRequest *)obj1;
         NCNotificationRequest *b = (NCNotificationRequest *)obj2;
+        NSString *stackIDa = [a sxiStackID];
 
-        if ([a.bulletin.sectionID isEqualToString:b.bulletin.sectionID]) {
+        NSString *stackIDb = [b sxiStackID];
+
+        if ([stackIDa isEqualToString:stackIDb]) {
             return [b.timestamp compare:a.timestamp] == NSOrderedDescending;
         }
 
-        if (b.bulletin.sectionID && a.bulletin.sectionID && stacks[b.bulletin.sectionID] && stacks[a.bulletin.sectionID]) {
-            if ([stacks[b.bulletin.sectionID][@"priority"] compare:stacks[a.bulletin.sectionID][@"priority"]] == NSOrderedSame) {
-                return [stacks[b.bulletin.sectionID][@"timestamp"] compare:stacks[a.bulletin.sectionID][@"timestamp"]] == NSOrderedDescending;
+        if (stackIDb && stackIDa && stacks[stackIDb] && stacks[stackIDa]) {
+            if ([stacks[stackIDb][@"priority"] compare:stacks[stackIDa][@"priority"]] == NSOrderedSame) {
+                return [stacks[stackIDb][@"timestamp"] compare:stacks[stackIDa][@"timestamp"]] == NSOrderedDescending;
             }
-            return [stacks[b.bulletin.sectionID][@"priority"] compare:stacks[a.bulletin.sectionID][@"priority"]] == NSOrderedDescending;
+            return [stacks[stackIDb][@"priority"] compare:stacks[stackIDa][@"priority"]] == NSOrderedDescending;
         }
 
-        return [a.bulletin.sectionID localizedStandardCompare:b.bulletin.sectionID] == NSOrderedAscending;
+        return [stackIDa localizedStandardCompare:stackIDb] == NSOrderedAscending;
     }];
 
     NSString *expandedSection = nil;
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
+
         if (req.bulletin.sectionID && req.sxiIsExpanded && req.sxiIsStack) {
-            expandedSection = req.bulletin.sectionID;
+            expandedSection = [req sxiStackID];
             break;
         }
     }
@@ -323,26 +347,29 @@ static void fakeNotifications() {
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
+
         if (req.bulletin.sectionID) {
+            NSString *stackID = [req sxiStackID];
+
             [req.sxiStackedNotificationRequests removeAllObjects];
             req.sxiIsStack = false;
             req.sxiVisible = false;
             req.sxiIsExpanded = false;
             req.sxiPositionInStack = ++sxiPositionInStack;
 
-            if ([expandedSection isEqualToString:req.bulletin.sectionID]) {
+            if ([expandedSection isEqualToString:stackID]) {
                 req.sxiVisible = true;
             }
 
-            if (!lastSection || ![lastSection isEqualToString:req.bulletin.sectionID]) {
-                lastSection = req.bulletin.sectionID;
+            if (!lastSection || ![lastSection isEqualToString:stackID]) {
+                lastSection = stackID;
                 lastStack = req;
 
                 req.sxiVisible = true;
                 req.sxiIsStack = true;
                 req.sxiPositionInStack = 0;
                 sxiPositionInStack = 0;
-                if ([expandedSection isEqualToString:req.bulletin.sectionID]) {
+                if ([expandedSection isEqualToString:stackID]) {
                     req.sxiIsExpanded = true;
                 }
 
@@ -351,11 +378,11 @@ static void fakeNotifications() {
                 continue;
             }
 
-            if (lastStack && [lastSection isEqualToString:req.bulletin.sectionID]) {
+            if (lastStack && [lastSection isEqualToString:stackID]) {
                 [lastStack sxiInsertRequest:req];
             }
 
-            if (req.sxiPositionInStack <= MAX_SHOW_BEHIND || [expandedSection isEqualToString:req.bulletin.sectionID]) {
+            if (req.sxiPositionInStack <= MAX_SHOW_BEHIND || [expandedSection isEqualToString:stackID]) {
                 [self.requests addObject:req];
             }
         } else {
@@ -376,6 +403,7 @@ static void fakeNotifications() {
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
+
         if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
             found = true;
             break;
@@ -397,6 +425,7 @@ static void fakeNotifications() {
     if (request.notificationIdentifier) {
         for (int i = 0; i < [self.allRequests count]; i++) {
             NCNotificationRequest *req = self.allRequests[i];
+
             if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
                 [self.allRequests removeObjectAtIndex:i];
             }
@@ -509,8 +538,17 @@ static void fakeNotifications() {
             cell.hidden = YES; 
         } else {
             cell.hidden = NO;
+
             if (cell.frame.size.height != 50) {
-                cell.frame = CGRectMake(cell.frame.origin.x + (10 * cell.contentViewController.notificationRequest.sxiPositionInStack), cell.frame.origin.y - 50, cell.frame.size.width - (20 * cell.contentViewController.notificationRequest.sxiPositionInStack), 50);
+                float widthMultiplier;
+
+                if (cell.contentViewController.notificationRequest.sxiPositionInStack == 1) {
+                    widthMultiplier = 20;
+                } else {
+                    widthMultiplier = 25;
+                }
+
+                cell.frame = CGRectMake(cell.frame.origin.x + ((widthMultiplier / 2) * cell.contentViewController.notificationRequest.sxiPositionInStack), cell.frame.origin.y - 50, cell.frame.size.width - (widthMultiplier * cell.contentViewController.notificationRequest.sxiPositionInStack), 50);
             }
         }
     } else {
@@ -701,7 +739,7 @@ static void fakeNotifications() {
 
 %new
 -(CGRect)sxiGetNotificationCountFrame {
-    return CGRectMake(self.view.frame.origin.x + 11, self.view.frame.origin.y + self.view.frame.size.height - 30, self.view.frame.size.width - 21, 25);
+    return CGRectMake(self.view.frame.origin.x + 11, self.view.frame.origin.y + self.view.frame.size.height - 26, self.view.frame.size.width - 21, 25);
 }
 
 %new
@@ -736,7 +774,7 @@ static void fakeNotifications() {
         self.sxiNotificationCount.clipsToBounds = YES;
         self.sxiNotificationCount.hidden = YES;
         self.sxiNotificationCount.alpha = 0.0;
-        self.sxiNotificationCount.textColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
+        self.sxiNotificationCount.textColor = [[UIColor blackColor] colorWithAlphaComponent:0.55];
         [self.view addSubview:self.sxiNotificationCount];
 
         if (showButtons) {
@@ -786,7 +824,7 @@ static void fakeNotifications() {
     }
 
     if (lv && [lv _notificationContentView] && [lv _notificationContentView].primaryLabel && [lv _notificationContentView].primaryLabel.textColor) {
-        self.sxiNotificationCount.textColor = [[lv _notificationContentView].primaryLabel.textColor colorWithAlphaComponent:0.8];
+        self.sxiNotificationCount.textColor = [[lv _notificationContentView].primaryLabel.textColor colorWithAlphaComponent:0.55];
     }
 
     if (lv) {
@@ -794,7 +832,11 @@ static void fakeNotifications() {
         [lv _headerContentView].hidden = !self.notificationRequest.sxiVisible;
 
         if (!self.notificationRequest.sxiVisible) {
-            lv.alpha = 0.7;
+            if (self.notificationRequest.sxiPositionInStack == 1) {
+                lv.alpha = 0.7;
+            } else {
+                lv.alpha = 0.55;
+            }
         } else {
             lv.alpha = 1.0;
         }
@@ -907,6 +949,7 @@ static void fakeNotifications() {
         id c = [self _visibleCellForIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
         if (!c) continue;
         NCNotificationListCell* cell = (NCNotificationListCell*)c;
+
         if ([notificationIdentifier isEqualToString:cell.contentViewController.notificationRequest.notificationIdentifier]) {
             
             [UIView animateWithDuration:CLEAR_DURATION animations:^{
@@ -918,14 +961,14 @@ static void fakeNotifications() {
 
 %new
 -(void)sxiCollapseAll {
-    NSMutableOrderedSet *sectionIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
+    NSMutableOrderedSet *stackIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
 
     for (NCNotificationRequest *request in priorityList.requests) {
         if (!request.bulletin.sectionID) continue;
 
-        if (![sectionIDs containsObject:request.bulletin.sectionID] && request.sxiIsStack && request.sxiIsExpanded) {
+        if (![stackIDs containsObject:[request sxiStackID]] && request.sxiIsStack && request.sxiIsExpanded) {
             [request sxiCollapse];
-            [sectionIDs addObject:request.bulletin.sectionID];
+            [stackIDs addObject:[request sxiStackID]];
         }
     }
 
@@ -933,18 +976,18 @@ static void fakeNotifications() {
 }
 
 %new
--(void)sxiExpand:(NSString *)sectionID {
-    NSMutableOrderedSet *sectionIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
-    [sectionIDs addObject:sectionID];
+-(void)sxiExpand:(NSString *)stackID {
+    NSMutableOrderedSet *stackIDs = [[NSMutableOrderedSet alloc] initWithCapacity:100];
+    [stackIDs addObject:stackID];
 
     // DON'T REPLACE THIS WITH sxiCollapseAll; it doesn't work because of that line above
     for (NCNotificationRequest *request in priorityList.requests) {
         if (!request.bulletin.sectionID) continue;
 
-        if (![sectionIDs containsObject:request.bulletin.sectionID] && request.sxiIsStack && request.sxiIsExpanded) {	
-            [request sxiCollapse];	
-            [sectionIDs addObject:request.bulletin.sectionID];	
-        }	
+        if (![stackIDs containsObject:[request sxiStackID]] && request.sxiIsStack && request.sxiIsExpanded) {   
+            [request sxiCollapse];  
+            [stackIDs addObject:[request sxiStackID]];  
+        }   
     }
 
     [listCollectionView reloadData];
@@ -956,7 +999,8 @@ static void fakeNotifications() {
         if (!c) continue;
 
         NCNotificationListCell* cell = (NCNotificationListCell*)c;
-        if ([sectionID isEqualToString:cell.contentViewController.notificationRequest.bulletin.sectionID]) {
+
+        if ([stackID isEqualToString:[cell.contentViewController.notificationRequest sxiStackID]]) {
             if (!frameFound) {
                 frameFound = true;
                 frame = cell.frame;
@@ -975,7 +1019,7 @@ static void fakeNotifications() {
 }
 
 %new
--(void)sxiCollapse:(NSString *)sectionID {
+-(void)sxiCollapse:(NSString *)stackID {
     CGRect frame = CGRectMake(0,0,0,0);
     bool frameFound = false;
     for (NSInteger row = 0; row < [self numberOfItemsInSection:0]; row++) {
@@ -983,7 +1027,8 @@ static void fakeNotifications() {
         if (!c) continue;
 
         NCNotificationListCell* cell = (NCNotificationListCell*)c;
-        if ([sectionID isEqualToString:cell.contentViewController.notificationRequest.bulletin.sectionID]) {
+
+        if ([stackID isEqualToString:[cell.contentViewController.notificationRequest sxiStackID]]) {
             if (!frameFound) {
                 frameFound = true;
                 frame = cell.frame;
@@ -1006,8 +1051,8 @@ static void fakeNotifications() {
 -(void)moveItemAtIndexPath:(id)prevPath toIndexPath:(id)newPath { [self reloadData]; }
 
 -(void)performBatchUpdates:(id)updates completion:(void (^)(bool finished))completion {
-	[self reloadData];
-	if (completion) completion(true);
+    [self reloadData];
+    if (completion) completion(true);
 }
 
 %end
@@ -1015,7 +1060,7 @@ static void fakeNotifications() {
 %hook NCNotificationListCollectionViewFlowLayout
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
-	NSArray *attrs =  %orig;
+    NSArray *attrs =  %orig;
 
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         if (attr.size.height == 0) {
@@ -1043,6 +1088,7 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
     bool enabled = [([file objectForKey:@"Enabled"] ?: @(YES)) boolValue];
     showButtons = [([file objectForKey:@"ShowButtons"] ?: @(NO)) boolValue];
     useIcons = [([file objectForKey:@"UseIcons"] ?: @(NO)) boolValue];
+    organizeByThread = [([file objectForKey:@"OrganizeByThread"] ?: @(NO)) boolValue];
     bool debug = false;
     #ifdef DEBUG
     debug = true;

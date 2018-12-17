@@ -2,6 +2,8 @@
   "ENABLED" = "Enabled";
   "SHOW_BUTTONS" = 'Show "Collapse" / "Clear All" buttons';
   "USE_ICONS" = "Use icons instead of text for buttons";
+  "ORGANIZE_BY_THREAD" = "Try organizing stacks by thread";
+  "ORGANIZE_BY_THREAD_DESCRIPTION" = "Organization relies on apps correctly setting a thread ID on their notifications. Not all do so you may not notice a difference with this turned on.";
   "RESPRING" = "Respring";
   "ARE_YOU_SURE_TO_RESET_PREFS" = "Are you sure you want to reset all your preferences? This cannot be undone.";
   "OK" = "OK";
