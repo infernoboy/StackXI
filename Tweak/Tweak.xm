@@ -8,9 +8,9 @@
 #define ICON_CLEAR_ALL_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/SXIClearAll.png"
 #define LANG_BUNDLE_PATH @"/Library/PreferenceBundles/StackXIPrefs.bundle/StackXILocalization.bundle"
 #define TEMPWIDTH 0
-#define TEMPDURATION 0.3
+#define TEMPDURATION 0.4
 #define CLEAR_DURATION 0.2
-#define MAX_SHOW_BEHIND 2 //amount of blank notifications to show behind each stack
+#define MAX_SHOW_BEHIND 3 //amount of blank notifications to show behind each stack
 
 extern dispatch_queue_t __BBServerQueue;
 
@@ -540,15 +540,7 @@ static void fakeNotifications() {
             cell.hidden = NO;
 
             if (cell.frame.size.height != 50) {
-                float widthMultiplier;
-
-                if (cell.contentViewController.notificationRequest.sxiPositionInStack == 1) {
-                    widthMultiplier = 20;
-                } else {
-                    widthMultiplier = 25;
-                }
-
-                cell.frame = CGRectMake(cell.frame.origin.x + ((widthMultiplier / 2) * cell.contentViewController.notificationRequest.sxiPositionInStack), cell.frame.origin.y - 50, cell.frame.size.width - (widthMultiplier * cell.contentViewController.notificationRequest.sxiPositionInStack), 50);
+                cell.frame = CGRectMake(cell.frame.origin.x + (10 * cell.contentViewController.notificationRequest.sxiPositionInStack), cell.frame.origin.y - 50, cell.frame.size.width - (20 * cell.contentViewController.notificationRequest.sxiPositionInStack), 50);
             }
         }
     } else {
@@ -739,7 +731,7 @@ static void fakeNotifications() {
 
 %new
 -(CGRect)sxiGetNotificationCountFrame {
-    return CGRectMake(self.view.frame.origin.x + 11, self.view.frame.origin.y + self.view.frame.size.height - 26, self.view.frame.size.width - 21, 25);
+    return CGRectMake(self.view.frame.origin.x + 11, self.view.frame.origin.y + self.view.frame.size.height - 30, self.view.frame.size.width - 21, 25);
 }
 
 %new
@@ -774,7 +766,7 @@ static void fakeNotifications() {
         self.sxiNotificationCount.clipsToBounds = YES;
         self.sxiNotificationCount.hidden = YES;
         self.sxiNotificationCount.alpha = 0.0;
-        self.sxiNotificationCount.textColor = [[UIColor blackColor] colorWithAlphaComponent:0.55];
+        self.sxiNotificationCount.textColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
         [self.view addSubview:self.sxiNotificationCount];
 
         if (showButtons) {
@@ -824,7 +816,7 @@ static void fakeNotifications() {
     }
 
     if (lv && [lv _notificationContentView] && [lv _notificationContentView].primaryLabel && [lv _notificationContentView].primaryLabel.textColor) {
-        self.sxiNotificationCount.textColor = [[lv _notificationContentView].primaryLabel.textColor colorWithAlphaComponent:0.55];
+        self.sxiNotificationCount.textColor = [[lv _notificationContentView].primaryLabel.textColor colorWithAlphaComponent:0.8];
     }
 
     if (lv) {
@@ -832,11 +824,7 @@ static void fakeNotifications() {
         [lv _headerContentView].hidden = !self.notificationRequest.sxiVisible;
 
         if (!self.notificationRequest.sxiVisible) {
-            if (self.notificationRequest.sxiPositionInStack == 1) {
-                lv.alpha = 0.7;
-            } else {
-                lv.alpha = 0.55;
-            }
+            lv.alpha = 0.7;
         } else {
             lv.alpha = 1.0;
         }
