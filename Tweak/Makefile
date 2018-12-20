@@ -1,5 +1,5 @@
 ARCHS = arm64
-TARGET = iphone:clang:11.3.1:11.3.1
+TARGET = iphone:clang
 
 
 include $(THEOS)/makefiles/common.mk
