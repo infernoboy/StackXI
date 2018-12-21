@@ -34,6 +34,24 @@ UIImage * imageWithView(UIView *view) {
     return img;
 }
 
+@interface UIButton(Blur)
+- (void)addBlurEffect;
+@end
+
+@implementation UIButton(Blur)
+
+- (void)addBlurEffect {
+    UIVisualEffectView *blur = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
+    blur.frame = self.bounds;
+    blur.userInteractionEnabled = false;
+    [self insertSubview:blur atIndex:0];
+    if (UIImageView *imageView = self.imageView) {
+        [self bringSubviewToFront:imageView];
+    }
+}
+
+@end
+
 static void fakeNotification(NSString *sectionID, NSDate *date, NSString *message) {
     dispatch_sync(__BBServerQueue, ^{
         BBBulletin *bulletin = [[BBBulletin alloc] init];
@@ -745,20 +763,22 @@ static void fakeNotifications() {
             self.sxiClearAllButton.hidden = YES;
             self.sxiClearAllButton.alpha = 0.0;
             [self.sxiClearAllButton setTitle:[translationDict objectForKey:kClear] forState: UIControlStateNormal];
-            self.sxiClearAllButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+            //self.sxiClearAllButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiClearAllButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiClearAllButton.layer.masksToBounds = true;
             self.sxiClearAllButton.layer.cornerRadius = 12.5;
+            [self.sxiClearAllButton addBlurEffect];
 
             self.sxiCollapseButton = [[UIButton alloc] initWithFrame:[self sxiGetCollapseButtonFrame]];
             [self.sxiCollapseButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
             self.sxiCollapseButton.hidden = YES;
             self.sxiCollapseButton.alpha = 0.0;
             [self.sxiCollapseButton setTitle:[translationDict objectForKey:kCollapse] forState:UIControlStateNormal];
-            self.sxiCollapseButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+            //self.sxiCollapseButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiCollapseButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiCollapseButton.layer.masksToBounds = true;
             self.sxiCollapseButton.layer.cornerRadius = 12.5;
+            [self.sxiCollapseButton addBlurEffect];
             
             [self.sxiClearAllButton addTarget:self action:@selector(sxiClearAll:) forControlEvents:UIControlEventTouchUpInside];
             [self.sxiCollapseButton addTarget:self action:@selector(sxiCollapse:) forControlEvents:UIControlEventTouchUpInside];
