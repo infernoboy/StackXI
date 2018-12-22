@@ -24,6 +24,7 @@ static NCNotificationDispatcher *dispatcher = nil;
 static bool showButtons = false;
 static bool useIcons = false;
 static bool canUpdate = true;
+static bool isOnLockscreen = true;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
@@ -341,6 +342,10 @@ static void fakeNotifications() {
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
+        if (isOnLockscreen && (!req.options || (req.options && !req.options.addToLockScreenWhenUnlocked))) {
+            continue;
+        }
+
         if (req.bulletin.sectionID) {
             [req.sxiStackedNotificationRequests removeAllObjects];
             req.sxiIsStack = false;
@@ -372,7 +377,7 @@ static void fakeNotifications() {
             if (lastStack && [lastSection isEqualToString:req.bulletin.sectionID]) {
                 [lastStack sxiInsertRequest:req];
             }
-
+            
             if (req.sxiPositionInStack <= MAX_SHOW_BEHIND || [expandedSection isEqualToString:req.bulletin.sectionID]) {
                 [self.requests addObject:req];
             }
@@ -1050,12 +1055,21 @@ static void fakeNotifications() {
 
 %end
 
+%hook SBDashBoardViewController
+
+-(void)viewWillAppear:(BOOL)animated {
+    %orig;
+
+    isOnLockscreen = !self.authenticated;
+    [listCollectionView sxiCollapseAll];
+}
+
+%end
+
 %end
 
 static void displayStatusChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-    if (listCollectionView) {
-        [listCollectionView sxiCollapseAll];
-    }
+    isOnLockscreen = true;
 }
 
 %ctor{

@@ -651,6 +651,12 @@
 -(void)_setListHasContent:(BOOL)arg1;
 @end
 
+@interface SBDashBoardViewController : UIViewController
+
+@property (assign,getter=isAuthenticated,nonatomic) BOOL authenticated;
+
+@end
+
 @interface NCNotificationViewController : UIViewController 
 
 @property (nonatomic,retain) NCNotificationRequest* notificationRequest;          
