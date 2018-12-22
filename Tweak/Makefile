@@ -1,6 +1,3 @@
-ARCHS = arm64
-TARGET = iphone:clang
-
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = StackXI
