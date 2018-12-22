@@ -1081,6 +1081,7 @@ static void fakeNotifications() {
 
 static void displayStatusChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
     isOnLockscreen = true;
+    [listCollectionView sxiCollapseAll];
 }
 
 %ctor{
