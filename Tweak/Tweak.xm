@@ -342,7 +342,8 @@ static void fakeNotifications() {
 
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
-        if (isOnLockscreen && (!req.options || (req.options && !req.options.addToLockScreenWhenUnlocked))) {
+        bool shouldBelongOnLockscreen = [req.requestDestinations containsObject:@"BulletinDestinationLockScreen"];
+        if (isOnLockscreen && !shouldBelongOnLockscreen) {
             continue;
         }
 
@@ -394,7 +395,6 @@ static void fakeNotifications() {
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
     if (!request || !request.notificationIdentifier) return 0;
-
     bool found = false;
 
     for (int i = 0; i < [self.allRequests count]; i++) {

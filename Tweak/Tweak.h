@@ -627,6 +627,7 @@
 
 @interface NCNotificationRequest : NSObject
 
+@property (nonatomic,copy,readonly) NSSet* requestDestinations;
 @property (nonatomic,copy,readonly) BBBulletin* bulletin;
 @property (nonatomic,copy,readonly) NSString* notificationIdentifier;
 @property (assign,nonatomic) bool sxiIsStack;
