@@ -401,6 +401,7 @@ static void fakeNotifications() {
         NCNotificationRequest *req = self.allRequests[i];
         if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
             found = true;
+            [self.allRequests replaceObjectAtIndex:(NSUInteger)i withObject:request];
             break;
         }
     }
@@ -571,11 +572,16 @@ static void fakeNotifications() {
 }
 
 -(void)_clearAllSectionListNotificationRequests {
-    [priorityList sxiClearAll];
+    //[priorityList sxiClearAll];
 }
 
 -(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3 {
     //do nothing
+}
+
+-(BOOL)modifyNotificationRequest:(NCNotificationRequest*)arg1 forCoalescedNotification:(id)arg2 {
+    [priorityList insertNotificationRequest:arg1];
+    return true;
 }
 
 %end
@@ -645,6 +651,11 @@ static void fakeNotifications() {
 
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1 {
     [priorityList removeNotificationRequest:arg1];
+    return %orig;
+}
+
+-(id)replaceNotificationRequest:(NCNotificationRequest*)arg1 {
+    [priorityList insertNotificationRequest:arg1];
     return %orig;
 }
 
