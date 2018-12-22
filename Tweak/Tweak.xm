@@ -670,10 +670,6 @@ static void fakeNotifications() {
 
 -(void)viewWillAppear:(bool)whatever {
     %orig;
-    self.sxiIsLTR = true;
-    if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute] == UIUserInterfaceLayoutDirectionRightToLeft) {
-        self.sxiIsLTR = false;
-    }
     [self sxiUpdateCount];
 }
 
@@ -746,6 +742,11 @@ static void fakeNotifications() {
     }
 
     if (inBanner && !self.sxiNotificationCount) return;
+
+    self.sxiIsLTR = true;
+    if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute] == UIUserInterfaceLayoutDirectionRightToLeft) {
+        self.sxiIsLTR = false;
+    }
 
     NCNotificationShortLookView *lv = (NCNotificationShortLookView *)MSHookIvar<UIView *>(self, "_lookView");
 
