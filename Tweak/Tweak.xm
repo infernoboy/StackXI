@@ -864,6 +864,9 @@ static void fakeNotifications() {
                 self.sxiNotificationCount.text = [NSString stringWithFormat:[translationDict objectForKey:kMoreNotifs], count];
             }
         } else if (showButtons) {
+            ((UILabel*)[[lv _headerContentView] _dateLabel]).hidden = YES;
+            ((UILabel*)[[lv _headerContentView] _dateLabel]).alpha = 0.0;
+
             self.sxiClearAllButton.hidden = NO;
             self.sxiClearAllButton.alpha = 1.0;
 
