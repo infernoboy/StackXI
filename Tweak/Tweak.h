@@ -627,6 +627,7 @@
 
 @interface NCNotificationRequest : NSObject
 
+@property (nonatomic,copy,readonly) NSSet* requestDestinations;
 @property (nonatomic,copy,readonly) BBBulletin* bulletin;
 @property (nonatomic,copy,readonly) NSString* notificationIdentifier;
 @property (assign,nonatomic) bool sxiIsStack;
@@ -651,6 +652,12 @@
 
 @interface SBDashBoardCombinedListViewController : UIViewController
 -(void)_setListHasContent:(BOOL)arg1;
+@end
+
+@interface SBDashBoardViewController : UIViewController
+
+@property (assign,getter=isAuthenticated,nonatomic) BOOL authenticated;
+
 @end
 
 @interface NCNotificationViewController : UIViewController 
@@ -806,6 +813,7 @@
 -(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3;
 -(BOOL)hasContent;
 -(void)clearAllNonPersistent;
+-(BOOL)modifyNotificationRequest:(NCNotificationRequest*)arg1 forCoalescedNotification:(id)arg2 ;
 
 @end
 
@@ -820,6 +828,7 @@
 -(id)init;
 -(id)insertNotificationRequest:(NCNotificationRequest*)arg1;
 -(id)removeNotificationRequest:(NCNotificationRequest*)arg1;
+-(id)replaceNotificationRequest:(NCNotificationRequest*)arg1;
 
 @end
 

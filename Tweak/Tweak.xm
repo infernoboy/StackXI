@@ -25,6 +25,7 @@ static bool showButtons = false;
 static bool useIcons = false;
 static bool canUpdate = true;
 static bool organizeByThread = false;
+static bool isOnLockscreen = true;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
 UIImage * imageWithView(UIView *view) {
@@ -34,6 +35,24 @@ UIImage * imageWithView(UIView *view) {
     UIGraphicsEndImageContext();
     return img;
 }
+
+@interface UIButton(Blur)
+- (void)addBlurEffect;
+@end
+
+@implementation UIButton(Blur)
+
+- (void)addBlurEffect {
+    UIVisualEffectView *blur = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
+    blur.frame = self.bounds;
+    blur.userInteractionEnabled = false;
+    [self insertSubview:blur atIndex:0];
+    if (UIImageView *imageView = self.imageView) {
+        [self bringSubviewToFront:imageView];
+    }
+}
+
+@end
 
 static void fakeNotification(NSString *sectionID, NSDate *date, NSString *message) {
     dispatch_sync(__BBServerQueue, ^{
@@ -362,6 +381,11 @@ static void fakeNotifications() {
     for (int i = 0; i < [self.allRequests count]; i++) {
         NCNotificationRequest *req = self.allRequests[i];
 
+        bool shouldBelongOnLockscreen = [req.requestDestinations containsObject:@"BulletinDestinationLockScreen"];
+        if (isOnLockscreen && !shouldBelongOnLockscreen) {
+            continue;
+        }
+
         if (req.bulletin.sectionID) {
             NSString *stackID = [req sxiStackID];
 
@@ -395,7 +419,7 @@ static void fakeNotifications() {
             if (lastStack && [lastSection isEqualToString:stackID]) {
                 [lastStack sxiInsertRequest:req];
             }
-
+						
             if (req.sxiPositionInStack <= MAX_SHOW_BEHIND || [expandedSection isEqualToString:stackID]) {
                 [self.requests addObject:req];
             }
@@ -412,7 +436,6 @@ static void fakeNotifications() {
 
 -(NSUInteger)insertNotificationRequest:(NCNotificationRequest *)request {
     if (!request || !request.notificationIdentifier) return 0;
-
     bool found = false;
 
     for (int i = 0; i < [self.allRequests count]; i++) {
@@ -420,6 +443,7 @@ static void fakeNotifications() {
 
         if ([req.notificationIdentifier isEqualToString:request.notificationIdentifier]) {
             found = true;
+            [self.allRequests replaceObjectAtIndex:(NSUInteger)i withObject:request];
             break;
         }
     }
@@ -592,11 +616,16 @@ static void fakeNotifications() {
 }
 
 -(void)_clearAllSectionListNotificationRequests {
-    [priorityList sxiClearAll];
+    //[priorityList sxiClearAll];
 }
 
 -(void)_moveNotificationRequestsToHistorySectionPassingTest:(/*^block*/id)arg1 animated:(BOOL)arg2 movedAll:(BOOL)arg3 {
     //do nothing
+}
+
+-(BOOL)modifyNotificationRequest:(NCNotificationRequest*)arg1 forCoalescedNotification:(id)arg2 {
+    [priorityList insertNotificationRequest:arg1];
+    return true;
 }
 
 %end
@@ -669,6 +698,11 @@ static void fakeNotifications() {
     return %orig;
 }
 
+-(id)replaceNotificationRequest:(NCNotificationRequest*)arg1 {
+    [priorityList insertNotificationRequest:arg1];
+    return %orig;
+}
+
 %end
 
 %hook NCNotificationShortLookViewController
@@ -680,10 +714,6 @@ static void fakeNotifications() {
 
 -(void)viewWillAppear:(bool)whatever {
     %orig;
-    self.sxiIsLTR = true;
-    if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute] == UIUserInterfaceLayoutDirectionRightToLeft) {
-        self.sxiIsLTR = false;
-    }
     [self sxiUpdateCount];
 }
 
@@ -757,6 +787,11 @@ static void fakeNotifications() {
 
     if (inBanner && !self.sxiNotificationCount) return;
 
+    self.sxiIsLTR = true;
+    if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute] == UIUserInterfaceLayoutDirectionRightToLeft) {
+        self.sxiIsLTR = false;
+    }
+
     NCNotificationShortLookView *lv = (NCNotificationShortLookView *)MSHookIvar<UIView *>(self, "_lookView");
 
     if (inBanner) {
@@ -789,20 +824,22 @@ static void fakeNotifications() {
             self.sxiClearAllButton.hidden = YES;
             self.sxiClearAllButton.alpha = 0.0;
             [self.sxiClearAllButton setTitle:[translationDict objectForKey:kClear] forState: UIControlStateNormal];
-            self.sxiClearAllButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+            //self.sxiClearAllButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiClearAllButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiClearAllButton.layer.masksToBounds = true;
             self.sxiClearAllButton.layer.cornerRadius = 12.5;
+            [self.sxiClearAllButton addBlurEffect];
 
             self.sxiCollapseButton = [[UIButton alloc] initWithFrame:[self sxiGetCollapseButtonFrame]];
             [self.sxiCollapseButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
             self.sxiCollapseButton.hidden = YES;
             self.sxiCollapseButton.alpha = 0.0;
             [self.sxiCollapseButton setTitle:[translationDict objectForKey:kCollapse] forState:UIControlStateNormal];
-            self.sxiCollapseButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
+            //self.sxiCollapseButton.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.6];
             [self.sxiCollapseButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             self.sxiCollapseButton.layer.masksToBounds = true;
             self.sxiCollapseButton.layer.cornerRadius = 12.5;
+            [self.sxiCollapseButton addBlurEffect];
             
             [self.sxiClearAllButton addTarget:self action:@selector(sxiClearAll:) forControlEvents:UIControlEventTouchUpInside];
             [self.sxiCollapseButton addTarget:self action:@selector(sxiCollapse:) forControlEvents:UIControlEventTouchUpInside];
@@ -871,6 +908,9 @@ static void fakeNotifications() {
                 self.sxiNotificationCount.text = [NSString stringWithFormat:[translationDict objectForKey:kMoreNotifs], count];
             }
         } else if (showButtons) {
+            ((UILabel*)[[lv _headerContentView] _dateLabel]).hidden = YES;
+            ((UILabel*)[[lv _headerContentView] _dateLabel]).alpha = 0.0;
+
             self.sxiClearAllButton.hidden = NO;
             self.sxiClearAllButton.alpha = 1.0;
 
@@ -1077,12 +1117,22 @@ static void fakeNotifications() {
 
 %end
 
+%hook SBDashBoardViewController
+
+-(void)viewWillAppear:(BOOL)animated {
+    %orig;
+
+    isOnLockscreen = !self.authenticated;
+    [listCollectionView sxiCollapseAll];
+}
+
+%end
+
 %end
 
 static void displayStatusChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-    if (listCollectionView) {
-        [listCollectionView sxiCollapseAll];
-    }
+    isOnLockscreen = true;
+    [listCollectionView sxiCollapseAll];
 }
 
 %ctor{
