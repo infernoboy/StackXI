@@ -147,11 +147,25 @@ static void fakeNotifications() {
 
 %new
 -(NSString *)sxiStackID {
-    if (organizeByThread && ![self.threadIdentifier hasPrefix:@"req-"]) {
-        return [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.threadIdentifier];
+    NSString *stackID;
+
+    if (organizeByThread) {
+        if (![self.threadIdentifier hasPrefix:@"req-"]) {
+            stackID = [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.threadIdentifier];
+        } else {
+            if ([self.bulletin.title length] > 0) {
+                stackID = [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.bulletin.title];
+            } else {
+                stackID = self.bulletin.sectionID;
+            }
+        }
     } else {
-        return self.bulletin.sectionID;
+        stackID = self.bulletin.sectionID;
     }
+
+    // NSLog(@"[StackXI] StackID: %@", stackID);
+
+    return stackID;
 }
 
 %new
