@@ -28,6 +28,8 @@ static bool organizeByThread = false;
 static bool isOnLockscreen = true;
 static NSDictionary<NSString*, NSString*> *translationDict;
 
+static NSArray *appsStackableByTitle = @[@"com.junecloud.Deliveries", @"com.google.hangouts", @"com.facebook.Messenger"];
+
 UIImage * imageWithView(UIView *view) {
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -172,7 +174,7 @@ static void fakeNotifications() {
         if (![self.threadIdentifier hasPrefix:@"req-"]) {
             stackID = [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.threadIdentifier];
         } else {
-            if ([self.bulletin.title length] > 0) {
+            if ([self.bulletin.title length] > 0 && [appsStackableByTitle containsObject:self.bulletin.sectionID]) {
                 stackID = [NSString stringWithFormat:@"%@:%@", self.bulletin.sectionID, self.bulletin.title];
             } else {
                 stackID = self.bulletin.sectionID;
